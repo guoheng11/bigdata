@@ -1,0 +1,5 @@
+hdfs dfs -rm -R -f -skipTrash /target  ( -R 递归删除  -skipTrash 回收站直接删除)
+
+
+清空回收站
+hdfs dfs -rm -f -r /user/admin/.Trash/*

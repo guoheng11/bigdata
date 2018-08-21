@@ -1,0 +1,266 @@
+https://blog.csdn.net/jiangsanfeng1111/article/details/53332635
+
+sqoop import --connect jdbc:mysql://localhost/retail_db --driver com.mysql.jdbc.Driver --table customers --username ghdba --password gh --target-dir /user/retail_db/customers --m 3
+
+Sqoop依赖与hadoop
+       数据的一方，存储在hdfs
+       底层的数据传输实现map/reduce yarn 只有map任务
+因为官网sqoop没有hadoop2.5对应的版本，要根据hadoop的版本进行编译（好像不用对应版本也可以，不过建议最好对应版本）。所以这里使用CDH 5.3.6。比较稳定。 去Cloudera的官网下载相应的发布版本号 http;//archive.cloudera.com/cdh5/
+
+使用CDH 5.3.6版本快速搭建Hadoop 2.x的伪分布和Hive环境
+Hadoop-2.5.0-cdh5.3.6.tar.gz         安装在/opt/cdh-5.3.6/hadoop-2.5.0-cdh5.3.6
+Hive-0.13.1-cdh5.3.6.tar.gz              安装在/opt/cdh-5.3.6/hive-0.13.1-cdh5.3.6
+Zookeeper-3.4.5-cdh.5.4.6.tar.gz    安装在/opt/cdh-5.3.6/zookeeper-3.4.5-cdh.5.4.6
+Sqoop-1.4.5-cdh5.3.6.tar.gz             安装在/opt/cdh-5.3.6/sqoop-1.4.5-cdh5.3.6
+
+Sqoop 安装及基本使用讲解
+(1)解压安装包到/opt/cdh-5.3.6/sqoop-1.4.5-cdh5.3.6
+
+[python] view plain copy
+tar –zxvf Sqoop-1.4.5-cdh5.3.6.tar.gz –C /opt/cdh-5.3.6/
+(2) 把mysql的jdbc驱动mysql-connector-java-5.1.10.jar复制到sqoop项目的lib目录下
+(3) 在${SQOOP_HOME}/conf中执行命令
+[python] view plain copy
+mv sqoop-env-template.sh sqoop-env.sh
+(4) 修改配置文件sqoop-env.sh
+[python] view plain copy
+#Set path to where bin/hadoop is available
+export HADOOP_COMMON_HOME=/opt/cdh-5.3.6/hadoop-2.5.0-cdh5.3.6
+
+#Set path to where hadoop-*-core.jar is available
+export HADOOP_MAPRED_HOME=/opt/cdh-5.3.6/hadoop-2.5.0-cdh5.3.6
+
+#set the path to where bin/hbase is available
+#export HBASE_HOME=/usr/local/hbase
+
+#Set the path to where bin/hive is available
+export HIVE_HOME=/opt/cdh-5.3.6/hive-0.13.1-cdh5.3.6
+
+#Set the path for where zookeper config dir is
+#export ZOOCFGDIR=/usr/local/zk
+好了，搞定了，下面就可以运行了。
+测试：
+1、列出mysql数据库中的所有数据库
+[python] view plain copy
+sqoop list-databases --connect jdbc:mysql://localhost:3306/ -username root -password root
+2、连接mysql并列出数据库中的表
+[python] view plain copy
+sqoop list-tables --connect jdbc:mysql://localhost:3306/test --username root --password root
+使用Sqoop导入数据到HDFS及本质分析
+（1）gather metadata   获取元数据
+
+（2）submit map only job 提交MR任务 仅仅执行map任务
+
+创建测试表：
+
+[sql] view plain copy
+create table my_user(
+    id  tinyint(4) not null auto_increment,
+    account varchar(255) default null,
+    passwd varchar(255) default null,
+    primary key (id)
+)
+
+insert into my_user values ('1','admin','admin');
+insert into my_user values ('2','test2','test2');
+insert into my_user values ('3','test3','test3');
+insert into my_user values ('4','test4','test4');
+insert into my_user values ('5','test5','test5');
+insert into my_user values ('6','test6','test6');
+insert into my_user values ('7','test7','test7');
+导入数据到hdfs
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/retail_gh \
+--username ghdba \
+--password gh \
+--table customers  \
+--target_dir /apps/hive/warehouse/retail_db.db/customers \
+--m 2 \ 或者-m
+不写导出目录，默认导出到用户名下，如：/user/beifeng/my_user
+默认4个map任务,默认逗号隔开
+Sqoop导入数据设置数据存储格式parquet
+hdfs中常见的数据存储格式
+    textfile
+    orcfile
+    parquet
+
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--target_dir /user/beifeng/sqoop/imp_my_user_parquet \
+--num-mappers 1 \
+--as-parquetfile
+在hive中create table hive_user
+[sql] view plain copy
+create table default.hive_user_orc(
+    id int,
+    username string,
+    passwd string
+)
+row format delimited fields terminated by ','
+stored as parquet
+加载数据
+[python] view plain copy
+load data inpath '/user/beifeng/sqoop/imp_my_user_parquet' into table default.hive_user_orc
+查询数据
+[sql] view plain copy
+select * from hive_user_orc;
+发现数据全部是null 这是sqoop1.4.5的bug 到1.4.6后已经修复
+Sqoop导入数据使用query讲解
+查询指定列数据导入
+
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--target_dir /user/beifeng/sqoop/imp_my_user_columns \ 目标路径
+--num-mappers 1 \ map数
+--columns id,account \ 导出的指定列
+在实际的项目中，要处理的数据，需要进行初步清洗和过滤
+    某些字段过滤
+    条件
+    join
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--query 'select id,account from my_user where $CONDITIONS '  \
+--target_dir /user/beifeng/sqoop/imp_my_user_query \
+--num-mappers 1 \
+Sqoop导入数据设置数据压缩为sanppy
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--target_dir /user/beifeng/sqoop/imp_my_sannpy \
+--delete-target-dir \如果目标目录存在，则删除。如果不设置这个，目标目录存在则会报错
+--num-mappers 1 \
+--compress \ 设置压缩 下面是压缩方法
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec \
+-- fields-terminated-by '\t' \ 设置字符之间的格式
+报错：cdh不支持压缩格式
+检查：
+[python] view plain copy
+cd {hadoop}/bin/native
+ls
+什么都没有
+[python] view plain copy
+bin/hadoop checknative 检查本地库支持哪些压缩操作
+发现都是false
+解决方法：
+编译cdh中的hadoop源码，将native的包拷贝到{hadoop}/bin/hadoop/native下
+对snappy压缩数据结合Hive进行数据的导入与分析
+[sql] view plain copy
+drop table if exists default.hive_user_snappy;
+create table default.hive_user_snappy(
+    id int,
+    username string,
+    passwd string
+)
+row format delimited fields terminated by ',';
+
+load data inpath '/user/beifeng/sqoop/imp_my_sannpy' into table default.hive_user_snappy
+mysql table
+    mysql导入数据到hdfs
+        hdfs sanpy
+    创建hive表
+        hive create table
+    导入hdfs数据到hive
+        load data into table
+    hive中数据分析
+        query
+Sqoop导入数据时两种增量方式导入
+增量数据的导入
+    有一个唯一的标识符，通常这个表都有一个字段，比如插入时间createtime
+    query
+        where createtime > 20161105 and createtime < 20161106
+    sqoop自带增量导入
+        --check-column  /检查哪一个值
+        --incremental   /append or lastmodified
+        --last-value    /检查的值的最后一个值数多少
+
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--target_dir /user/beifeng/sqoop/imp_my_increament \
+--num-mappers 1 \
+--incremental append \ 不能和--delete-target-dir一起使用
+--check-column id \
+--last-value 4
+Sqoop导入数据direct使用
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--target_dir /user/beifeng/sqoop/imp_my_direct \
+--delete-target_dir \
+--num-mappers 1 \
+--direct
+速度变快
+Sqoop导出数据Export使用
+hive table
+    table
+        hiveserver2进行jdbc方式查询数据
+    hdfs file
+        export -> mysql/oracle
+
+[python] view plain copy
+touch /opt/datas/user.txt
+vi /opt/datas/user.txt
+    8,test8,test8
+    9,test9,test9
+bin/hdfs dfs -mkdir -p /user/beifeng/sqoop/exp/user/
+bin/hdfs dfs -put /opt/datas/user /user/beifeng/sqoop/exp/user/
+
+
+bin/sqoop export \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--export-dir /user/beifeng/sqoop/exp/user \
+--num-mappers 1 \
+Sqoop如何将RDBMS表中的数据导入到Hive表中
+[sql] view plain copy
+use default;
+create table user_hive(
+    id int,
+    account string,
+    passwd string
+)
+row format delimited fields terminated by '\t'
+[python] view plain copy
+bin/sqoop import \
+--connect jdbc:mysql://hadoop-senior.com:3306/test \
+--username root \
+--password 123456 \
+--table my_user  \
+--delete-target-dir \
+--fields-terminated-by '\t' \
+--num-mappers 1 \
+--hive-import \
+--hive-database default \
+--hive-table user_hive
+Sqoop如何导出Hive表中数据到RDBMS中
+这就是将hdfs中数据导出到rdbms中，同：Sqoop导出数据Export使用
+
+Sqoop使用--options-file进行运行任务讲解
+Hive中有
+    bin/hive –f 脚本 便可以执行
+sqoop中使用
+    bin/sqoop –option-file 脚本 便可以执行了，脚本最好按官方文档写
+

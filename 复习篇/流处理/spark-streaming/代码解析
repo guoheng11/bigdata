@@ -1,0 +1,125 @@
+1。基础代码
+    python版本
+        from pyspark import SparkContext
+        from pyspark.streaming import StreamingContext
+        # Create a local StreamingContext with two working threads and a batch interval of 2 seconds
+        sc = StreamingContext( SparkContext("local[2]", "NetWordCount"), 2 )   //local[2]表示两个线程最少两个（拿数据一个线程，处理数据一个）可以写local[*]
+        //以下四行代码被start方法循环调用
+        lines = ssc.socketTextStream("localhost", 3333)      //创造一个Dstream  接收数据
+        words = lines.flatMap(lambda line: line.split(" "))  //处理Dstream与处理RDD一致
+        pairs = words.map(lambda word: (word, 1))
+        wordCounts = pairs.reduceByKey(lambda x, y: x + y)
+
+        ssc.start()           //代码执行开始===》循环执行以上代码
+        ssc.awaitTermination()
+    scala版本
+        import org.apache.spark._
+        import org.apache.spark.streaming._
+        import org.apache.spark.streaming.StreamingContext._
+        val conf = new SparkConf().setMaster("local[2]").setAppName("ghTestStreaming")
+        val ssc = new StreamingContext(conf , Seconds(3))
+        val lines = ssc.socketTextStream("local",9999)
+
+
+
+
+
+
+代码比较
+1。以下是错误代码
+    dstream.foreachRDD { rdd =>
+    val connection = createNewConnection() // executed at the driver node rdd.foreach { record =>
+    connection.send(record) // executed at the worker }
+    }
+
+2。正确代码
+    dstream.foreachRDD { rdd =>
+    rdd.foreachPartition { partitionOfRecords =>
+    //val connection = createNewConnection()
+    // ConnectionPool is a static, lazily initialized pool of connections
+    val connection = ConnectionPool.getConnection()
+    partitionOfRecords.foreach(record => connection.send(record))
+     ConnectionPool.returnConnection(connection) // return to the pool for future reuse //connection.close()
+    } }
+
+
+创造一个checkpointing
+
+    // Function to create and setup a new StreamingContext
+    def functionToCreateContext(): StreamingContext = {
+        val ssc = new StreamingContext(...) // new context
+        val lines = ssc.socketTextStream(...) // create DStreams
+        ...
+        ssc.checkpoint(checkpointDirectory) // set checkpoint directory ssc
+    }
+    // Get StreamingContext from checkpoint data or create a new one
+    val context = StreamingContext.getOrCreate(checkpointDirectory, functionToCreateContext) // ......
+    // Start the context
+    context.start()
+    context.awaitTermination()
+    ***********注意*************
+    正常退出应用需要自己清除checkpointDirectory目录
+
+
+3。创造structured Streaming
+     val lines = spark.readStream.format("socket").option("host", "localhost").option("port", 9999).load()
+       // Split the lines into words
+       val words = lines.as[String].flatMap(_.split(" "))
+       // Generate running word count
+       val wordCounts = words.groupBy("value").count()
+       val query = wordCounts.writeStream.outputMode("complete").format("console").start()
+       query.awaitTermination()
+
+
+4.创建一个watermark
+val windowedCounts = words.withWatermark("timestamp", "10 minutes") .groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"word") .count()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1

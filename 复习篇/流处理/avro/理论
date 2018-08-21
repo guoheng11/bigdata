@@ -1,0 +1,15 @@
+1。apache avro
+    1。apache 单独的顶级项目    以前是hadoop下的项目
+    组成：
+        1。schema
+        2。两种编码形式
+            文本模式（json）太大不建议
+            二进制模式  一般存储采用格式
+
+2。问什么用avro
+    1。包含schema
+    2。对比csv ： csv中列是无序的没有数据类型都是string
+    3。对比json： json是普通文本文件太大不利于存储
+    4。avro：支持schema，schema的衍化（最具特色的地方）
+
+3。

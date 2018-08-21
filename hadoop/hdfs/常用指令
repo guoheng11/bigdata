@@ -1,0 +1,11 @@
+hdfs dfs -du -h
+
+hdfs dfs -du /
+
+hdfs dfs -rm -skipTrash /....../filename
+
+su hdfs
+
+hdfs dfs -expunge
+
+exit

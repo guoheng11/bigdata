@@ -1,0 +1,35 @@
+//import  org.apache.spark.sql.functions._
+//import org.apache.spark.sql.types._
+
+
+
+
+1。获取dataframe
+val df1 = spark.read.format("csv").option("header","false").option("delimiter",";").option("escape","\"").load("/root/customers.csv")
+
+.withColumnRenamed("_c0","id")  //只改变列的名称
+.withColumnRenamed("_c1","name")
+.withColumn("product_price",col("_c4").cast(DoubleType)) //添加一列（"字段名"，"获取数据的函数".cast("数据类型)）
+.select("id","product_price")    //过滤多余字段
+    df1.show（10,false）显示10条信息,false表示不省略比较长的列内容
+说明：.option("header","true")表示有头部
+      option("delimiter",";")表示每个字段之间的分隔符为";"
+      option("escape","\"")表示字符串是用引号包裹的
+        .load("/root/customers.csv")表示文件加载的路径（hdfs上）
+如果没有表头===》可以自己取名字
+
+2。注册成表
+    df.createOrReplaceTempView("customers")    "customers"表示表名可以自己取
+    可以执行sql
+    方式1：
+    %spark
+    spark.sql("select * from customers").show
+    方式二：
+    %sql
+    select * from customers limit 5
+
+
+
+
+
+

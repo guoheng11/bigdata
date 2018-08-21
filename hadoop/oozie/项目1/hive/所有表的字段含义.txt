@@ -1,0 +1,126 @@
+1.user_event
+CREATE TABLE user_event AS
+    SELECT
+        t.user_id,
+        t.event_id,
+        t.invited AS user_invited,
+        datediff(from_unixtime(unix_timestamp(CONCAT(SUBSTR(e.start_time, 1, 10), ' ', SUBSTR(e.start_time, 12, 8)), 'yyyy-MM-dd hh:mm:ss')), from_unixtime(unix_timestamp(CONCAT(SUBSTR(t.time_stamp, 1, 10), ' ', SUBSTR(t.time_stamp, 12, 8)), 'yyyy-MM-dd hh:mm:ss'))) AS view_ahead_days,
+        t.interested AS user_interested,
+        e.user_id AS event_creator
+    FROM train t INNER JOIN events e ON t.event_id = e.event_id
+    WHERE t.time_stamp regexp '^\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.*' AND e.start_time regexp '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z';
+
+2.user_friend_count
+CREATE TABLE user_friend_count AS
+      SELECT
+          user_id,
+          count(*) AS friend_count
+      FROM user_friend
+      GROUP BY user_id;
+3.event_users
+CREATE TABLE event_users AS
+    SELECT
+        event_id,
+        user_id AS attend_user_id,
+        CASE WHEN attend_type = 'invited' THEN 1 ELSE 0 END AS invited,
+        CASE WHEN attend_type = 'yes' THEN 1 ELSE 0 END AS attended,
+        CASE WHEN attend_type = 'no' THEN 1 ELSE 0 END AS not_attended,
+        CASE WHEN attend_type = 'maybe' THEN 1 ELSE 0 END AS maybe_attended
+    FROM event_attendee;
+
+
+
+4.event_creator_is_friend
+CREATE TABLE event_creator_is_friend AS
+    SELECT
+        ue.user_id,
+        ue.event_id,
+        ue.user_invited,
+        ue.view_ahead_days,
+        ue.user_interested,
+        ue.event_creator,
+        CASE WHEN uf.friend_id IS NOT NULL THEN 1 ELSE 0 END AS event_creator_is_friend,
+        CASE WHEN ufc.friend_count IS NOT NULL THEN ufc.friend_count ELSE 0 END AS user_friend_count
+    FROM user_event ue
+        LEFT JOIN user_friend uf ON ue.user_id = uf.user_id AND ue.event_creator = uf.friend_id
+        LEFT JOIN user_friend_count ufc ON ue.user_id = ufc.user_id;
+
+
+5.user_attend_status
+CREATE TABLE user_attend_status AS
+    SELECT
+        event_id,
+        attend_user_id,
+        MAX(invited) AS invited,
+        MAX(attended) as attended,
+        MAX(not_attended) AS not_attended,
+        MAX(maybe_attended) AS maybe_attended
+    FROM event_users
+    GROUP BY event_id, attend_user_id;
+
+
+6.friend_attend_status
+CREATE TABLE friend_attend_status AS
+    SELECT
+        uf.user_id,
+        uf.friend_id,
+        uas.event_id,
+	CASE WHEN uas.invited IS NOT NULL AND uas.invited > 0 THEN 1 ELSE 0 END AS invited,
+        CASE WHEN uas.attended IS NOT NULL AND uas.attended > 0 THEN 1 ELSE 0 END AS attended,
+        CASE WHEN uas.not_attended IS NOT NULL AND uas.not_attended > 0 THEN 1 ELSE 0 END AS not_attended,
+        CASE WHEN uas.maybe_attended IS NOT NULL AND uas.maybe_attended > 0 THEN 1 ELSE 0 END AS maybe_attended
+    FROM user_friend uf
+        LEFT JOIN user_attend_status uas ON uf.friend_id = uas.attend_user_id;
+
+-- check if friend_attend_summary table exists
+DROP TABLE IF EXISTS friend_attend_summary;
+-- create friend_attend_summary table
+
+
+
+7.friend_attend_summary
+CREATE TABLE friend_attend_summary AS
+    SELECT
+        user_id, event_id,
+        SUM(invited) AS invited_friends_count,
+        SUM(attended) AS attended_friends_count,
+        SUM(not_attended) AS not_attended_friends_count,
+        SUM(maybe_attended) AS maybe_attended_friends_count
+    FROM friend_attend_status
+    WHERE event_id IS NOT NULL
+    GROUP BY user_id, event_id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

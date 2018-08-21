@@ -1,0 +1,11 @@
+put 'employee', 'wshen', 'profile:firstName', 'Wayne'
+put 'employee', 'wshen', 'profile:lastName', 'Shen'
+put 'employee', 'wshen', 'department:name', 'Risk Management'
+put 'employee', 'wshen', 'contact:emailAddress', 'wayne.shen@it21learning.com'
+put 'employee', 'wshen', 'contact:phone', '416-xxx-2652'
+
+put 'employee', 'mikes', 'profile:firstName', 'Mike'
+put 'employee', 'mikes', 'profile:lastName', 'Smith'
+put 'employee', 'mikes', 'department:name', 'IT Services'
+put 'employee', 'mikes', 'contact:emailAddress', 'mike.smith@it21learning.com'
+put 'employee', 'mikes', 'contact:phone', '905-xxx-2652'

@@ -1,0 +1,41 @@
+第一种比较简单，但是只适合小表进行count
+
+1.count命令
+
+最直接的方式是在hbase shell中执行count的命令可以统计行数。
+
+[html] view plain copy
+
+hbase> count 't1'
+hbase> count 'events', INTERVAL => 100000
+hbase> count 't1', CACHE => 1000
+hbase> count 't1', INTERVAL => 10, CACHE => 1000
+其中，INTERVAL为统计的行数间隔，默认为1000，CACHE为统计的数据缓存。这种方式效率很低，如果表行数很大的话不建议采用这种方式。
+
+下面两种方法可以进行大表count
+2. 调用Mapreduce
+[plain] view plain copy
+
+$HBASE_HOME/bin/hbase   org.apache.hadoop.hbase.mapreduce.RowCounter 'tablename'
+这种方式效率比上一种要搞很多，调用的hbase jar中自带的统计行数的类。
+1000w耗时两分钟。
+
+
+
+3.hive over hbase
+如果已经见了hive和hbase的关联表的话，可以直接在hive中执行sql语句统计hbase表的行数。
+hive over hbase 表的建表语句为：
+/*创建hive与hbase的关联表*/
+[sql] view plain copy
+
+CREATE TABLE hive_hbase_1(key INT,value STRING)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping"=":key,cf:val")
+TBLPROPERTIES("hbase.table.name"="t_hive","hbase.table.default.storage.type"="binary");
+/*hive关联已经存在的hbase*/
+[sql] view plain copy
+
+CREATE EXTERNAL TABLE hive_hbase_1(key INT,value STRING)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping"=":key,cf:val")
+TBLPROPERTIES("hbase.table.name"="t_hive","hbase.table.default.storage.type"="binary");

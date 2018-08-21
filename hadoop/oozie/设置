@@ -1,0 +1,3 @@
+ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/hdp/2.6.4.0-91/oozie/libext/mysql-connector-java.jar
+
+/usr/hdp/2.6.4.0-91/oozie/libext/mysql-connector-java.jar

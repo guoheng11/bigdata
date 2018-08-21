@@ -1,0 +1,17 @@
+1. retail_db --> customers.csv, orders.csv, products.csv & order_items.csv
+
+2. load them in spark, and write them as avro files (may require repartition / coalesce to 1 partition)
+
+3. create hive tables to use the avro files
+
+
+
+List of compression supported by Parquet:
+
+
+
+gzip - org.apache.hadoop.io.compress.GzipCodec
+bzip2 - org.apache.hadoop.io.compress.BZip2Codec
+LZO - com.hadoop.compression.lzo.LzopCodec
+Snappy - org.apache.hadoop.io.compress.SnappyCodec
+Deflate - org.apache.hadoop.io.compress.DeflateCodec

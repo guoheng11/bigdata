@@ -1,0 +1,129 @@
+                         六大约束：主键约束、外键约束、非空约束、唯一约束、默认约束、自动增加
+
+　　　　　　　　　　　　　　1.2.1：主键约束
+
+　　　　　　　　　　　　　　　　　　　　PRIMARY KEY(primary key)：独一无二(唯一)和不能为空(非空)，通俗的讲，就是在表中增加记录时，在该字段下的数据不能重复，不能为空，比如以上面创建的表为例子，在表中增加两条记录，如果id字段用了主键约束。则id不能一样，并且不能为空。一般每张表中度有一个字段为主键，唯一标识这条记录。以后需要找到该条记录也可以同这个主键来确认记录，因为主键是唯一的，并且非空，一张表中每个记录的主键度不一样，所以根据主键也就能找到对应的记录。而不是多条重复的记录。如果没有主键，那么表中就会存在很多重复的记录，那么即浪费存储空间，在查询时也消耗更多资源。
+
+　　　　　　　　　　　　　　　　　　　　一般被主键约束了的字段度习惯性的称该字段为该表的主键
+
+　　　　　　　　　　　　　　　　　　　　单字段主键约束　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　　　　　　　　　两种方式都可以
+
+　　　　　　　　　　　　　　　　　　　　　　CREATE TABLE student(　　　　　　　　　　　　CREATE TABLE student(
+
+　　　　　　　　　　　　　　　　　　　　　　　　id　　INT(11) PRIMARY KEY,　　　　　　　　　　id　　INT(11),
+
+　　　　　　　　　　　　　　　　　　　　　　　　name　　VARCHAR(12),　　　　　　　　　　　　name　　VARCHAR(12),
+
+　　　　　　　　　　　　　　　　　　　　　　　　age　　INT(11)　　　　　　　　　　　　　　　　 age　　INT(11),
+
+　　　　　　　　　　　　　　　　　　　　　　);　　　　　　　　　　　　　　　　　　　　　　　　　 PRIMARY KEY(id) );
+
+　　　　　　　　　　　　　　　　　　　　多字段主键约束(复合主键)
+
+　　　　　　　　　　　　　　　　　　　　　　　　这个id和name都市主键，说明在以后增加的插入的记录中，id和name不能同时一样，比如说可以是这样。一条记录为id=1，name=yyy、另一条记录为：id=1，name=zzz。 这样是可以的。并不是你们所理解的两个字段分别度不可以相同。
+
+　　　　　　　　　　　　　　　　　　　　　　CREATE TABLE student(　　　　　　　　　　　　　　CREATE TABLE student(
+
+　　　　　　　　　　　　　　　　　　　　　　　　id　　INT(11) PRIMARY KEY,　　　　　　　　　　　　id　　INT(11),
+
+　　　　　　　　　　　　　　　　　　　　　　　　name　　VARCHAR(12) PRIMARY KEY,　　　　　　　name　　VARCHAR(12),
+
+　　　　　　　　　　　　　　　　　　　　　　　　age　　INT(11)　　　　　　　　　　　　　　　　　　　age　　INT(11),
+
+　　　　　　　　　　　　　　　　　　　　　　);　　　　　　　　　　　　　　　　　　　　　　　　　　　　PRIMARY KEY(id,name) );
+
+　
+　　　　　　　　　　　　　　1.2.2：外键约束
+
+　　　　　　　　　　　　　　　　　　　　什么是外键举个例子就清楚了，有两张表，一张表是emp(员工)表，另一张表是dept(部门)表，一个员工属于一个部门，那么如何通过员工能让我们自己他在哪个部门呢？那就只能在员工表中增加一个字段，能代表员工所在的部门，那该字段就只能是存储dept中的主键了(因为主键是唯一的，才能确实是哪个部门，进而代表员工所在的部门，如果是部门名称，有些部门的名称可能是同名。就不能区分了。)，像这样的字段，就符合外键的特点，就可以使用外键约束，使该字段只能够存储另一张表的主键。如果不被外键约束，那么该字段就无法保证存储进来的值就一定是另一张表的主键值。
+
+　　　　　　　　　　　　　　　　　　　　外键约束的特点：
+
+　　　　　　　　　　　　　　　　　　　　　　1、外键约束可以描述任意一个字段(包括主键)，可以为空，并且一个表中可以有多个外键。但是外键字段中的值必须是另一张表中的主键。
+
+　　　　　　　　　　　　　　　　　　　　　　2、这样被外键关联的两种表的关系可以称为父子表或者主从表。子表(从表)拥有外键字段的表，父表(主表)被外键字段所指向的表。
+
+　　　　　　　　　　　　　　　　　　　　　　3、子表被外键约束修饰的字段必须和父表的主键字段的类型一样。
+
+　　　　　　　　　　　　　　　　　　　　　　注意：一个表中有被外键修饰的字段，就称该表有外键(是“有外键”。而不是“是外键”)，并会给该表中的外键约束取一个名称，所以我们常说的这个表有没有外键，指的不是被外键约束修饰的字段名，而是指这个表是否有存在外键约束。也就是说，不能说这个表的外键是xxx(该表中被外键约束修饰的字段名)，这种说法是错误的，但是大多数人已经习惯了这样，虽然影响不大，但是在很多时候需要理解一个东西时，会造成一定的困扰。
+
+　　　　　　　　　　　　　　　　　　　　格式：CONSTRAINT　　外键名称　　FOREIGN KEY(被外键约束的字段名称)　　REFERENCES  主表名(主键字段)
+
+　　　　　　　　　　　　　　　　　　　　　　　　英文解释：CONSTRAINT:约束　　　　REFERENCES:参考
+
+　　　　　　　　　　　　　　　　　　　　　　 CREATE TABLE tableA
+　　　　　　　　　　　　　　　　　　　　  (
+　　　　　　　　　　　　　　　　　　　　     id INT(11),
+　　　　　　　　　　　　　　　　　　　　    name VARCHAR(22),
+　　　　　　　　　　　　　　　　　　　　      location VARCHAR(50),
+　　　　　　　　　　　　　　　　　　　　      PRIMARY KEY(id)
+　　　　　　　　　　　　　　　　　　　　     );
+　　　　　　　　　　　　　　　　　　　　     CREATE TABLE tableB
+　　　　　　　　　　　　　　　　　　　　   (
+　　　　　　　　　　　　　　　　　　　　        id INT(11),
+　　　　　　　　　　　　　　　　　　　　      name VARCHAR(22) NOT NULL,
+　　　　　　　　　　　　　　　　　　　　    deptId INT(11),
+　　　　　　　　　　　　　　　　　　　　     PRIMARY KEY(id),
+　　　　　　　　　　　　　　　　　　　　     CONSTRAINT tableA_tableB_1 FOREIGH KEY(deptId) REFERENCES tableA(id)
+　　　　　　　　　　　　　　　　　　　　       );        　　　　
+
+　　　　　　　　　　　　　　　　　　　解释：tableB中有一个名为tableA_tableB_1的外键关联了tableA和tableB两个表，被外键约束修饰的字段为tableB中的deptId，主键字段为tableA中的id　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　1.2.3：非空约束
+
+　　　　　　　　　　　　　　　　　　　　NOT NULL. 被该约束修饰了的字段，就不能为空，主键约束中就包括了这个约束
+
+　　　　　　　　　　　　　　　　　　　　 　　 CREATE TABLE tableA
+　　　　　　　　　　　　　　　　　　　　  (
+　　　　　　　　　　　　　　　　　　　　     id INT(11),
+　　　　　　　　　　　　　　　　　　　　    name VARCHAR(22) NOT NULL,
+　　　　　　　　　　　　　　　　　　　　      location VARCHAR(50),
+　　　　　　　　　　　　　　　　　　　　      PRIMARY KEY(id)
+　　　　　　　　　　　　　　　　　　　　     );
+
+　　　　　　　　　　　　　　1.2.4：唯一约束
+
+　　　　　　　　　　　　　　　　　　　　UNIQUE  被唯一约束修饰了的字段，表示该字段中的值唯一，不能有相同的值，通俗点讲，就好比插入两条记录，这两条记录中处于该字段的值不能是一样的。
+
+　　　　　　　　　　　　　　　　　　　 　　 CREATE TABLE tableA
+　　　　　　　　　　　　　　　　　　　　  (
+　　　　　　　　　　　　　　　　　　　　     id INT(11),
+　　　　　　　　　　　　　　　　　　　　    name VARCHAR(22) UNIQUE,
+　　　　　　　　　　　　　　　　　　　　      location VARCHAR(50),
+　　　　　　　　　　　　　　　　　　　　      PRIMARY KEY(id)
+　　　　　　　　　　　　　　　　　　　　     );
+
+　　　　　　　　　　　　　　　　　　　　也就是说在插入的记录中，每条记录的name值不能是一样的。
+
+　　　　　　　　　　　　　　1.2.5：默认约束
+
+　　　　　　　　　　　　　　　　　　　　Default  指定这一列的默认值为多少，比如，男性同学比较多，性别就可以设置为默认男，如果插入一行记录时，性别没有填，那么就默认加上男　
+
+　　　　　　　　　　　　　　　　　　　
+　　　　　　　　　　　　　　　　　　　　      CREATE TABLE table
+　　　　　　　　　　　　　　　　　　　　      (
+　　　　　　　　　　　　　　　　　　　　       id INT(11) PRIMARY KEY,
+　　　　　　　　　　　　　　　　　　　　        name VARCHAR(22) NOT NULL,
+　　　　　　　　　　　　　　　　　　　　    deptId INT(11) DEFAULT 1111,
+　　　　　　　　　　　　　　　　　　　　      salary FLOAT
+　　　　　　　　　　　　　　　　　　　　  );
+
+　　　　　　　　　　　　　　1.2.6：自动增加　　
+
+　　　　　　　　　　　　　　　　　　　　AUTO_INCREMENT 一个表只能一个字段使用AUTO_INCREMENT，并且使用这个约束的字段只能是整数类型(任意的整数类型     TINYINT,SMALLIN,INT,BIGINT)，默认值是1，也就是说从1开始增加的。一般就是给主键使用的，自动增加，使每个主键的值度不一样，并且不用我们自己管理，让主键自己自动生成
+
+　　　　　　　　　　　　　　　　　　　　    CREATE TABLE table
+　　　　　　　　　　　　　　　　　　　　 (
+　　　　　　　　　　　　　　　　　　　　    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+　　　　　　　　　　　　　　　　　　　　    name VARCHAR(22) NOT NULL
+　　　　　　　　　　　　　　　　　　　　  );
+         mysql 只有主键能自动增长么
+                          不一定的，MySQL 每张表只能有1个自动增长字段，这个自动增长字段即可作为主键，也可以用作非主键使用，但是请注意将自动增长字段当做非主键使用时必须必须为其添加唯一索引，否则系统将会报错。例如：
+                          1.将自动增长字段设置为主键。
+                          create table t1 (id int auto_increment Primary key,sid int);
+                          2.将自动增长字段设置为非主键，注意必须显式添加Unique键。
+                          create table t2 (sid int primary key,id int auto_increment Unique);
+                          3.将自动增长字段设置为非主键如果未添加唯一索引将会报错**，如下面语句
+                          create table t3 (sid int primary key,id int auto_increment)。

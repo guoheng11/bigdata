@@ -1,0 +1,13 @@
+s1 = {0}
+s2 = {i % 2 for i in range(10)}
+s = set('hi')
+t = set(['h', 'e', 'l', 'l', 'o'])
+print(s.intersection(t), s & t)  # 交集
+print(s.union(t), s | t)   # 并集
+print(s.difference(t), s - t)  # 差集
+print(s.symmetric_difference(t), s ^ t) # 对称差集
+print(s1.issubset(s2), s1 <= s2) # 子集（被包含）
+print(s1.issuperset(s2), s1 >= s2)   # 父集（包含）
+
+
+https://www.cnblogs.com/tina-python/p/5468495.html

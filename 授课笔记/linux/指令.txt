@@ -1,0 +1,6 @@
+ps
+tar
+file
+find
+grep
+zipfile

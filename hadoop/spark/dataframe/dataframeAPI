@@ -1,0 +1,2 @@
+1. printSchema       打印dataframe的schema
+2.df.groupBy(col("colName")).agg(count(col(colName)).as("newColName"),sum(col(colName)).as("newColName"))

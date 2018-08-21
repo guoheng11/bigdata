@@ -1,0 +1,23 @@
+不熟悉的
+mv  移动文件
+tar 打包压缩    tar czvf demo.tar.gz *      tar xzvf demo.tar.gz *
+locate   locate -r /tar$
+file    file zipfile.py      file -z zipFile     file /dev/null
+wc      ls -l *.py | wc -l
+head     head -5 zipfile.py
+tail     tail -5 zipfile.py    tail -f file
+cp
+cat
+hexdump    hexdump -C my.py
+ln         ln -s /usr/bin/hexdump d
+find
+date
+cut
+tr      date -u | tr 'a-z' 'A-Z'     echo 'abcdefg' | tr7 -d 'b-e'    echo 'abbbbg' | tr -s 'b'
+nohup    nohup jupyter notebook &    nohup comm >/dev/null 2>&1 &
+ps  -e --forest
+ps -eo pid,user,cmd
+kill -l     kill -9 1234     kill 1234
+rm
+rmdir
+read

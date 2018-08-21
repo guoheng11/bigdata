@@ -1,0 +1,32 @@
+genres = ArrayType(StructType([StructField("id", IntegerType(), False), StructField("name", StringType(), True)]))
+
+df_MovieCategory = df.withColumn("movie_category", from_json(col("genres"), genres)) \
+.select(col("id"), col("movie_category")).select(col("id"), explode(col("movie_category"))) \
+.select(col("id"), col("col.name"))
+
+
+
+
+
+
+
+# Pandas DataFrame to Spark DataFrame
+import numpy as np
+import pandas as pd
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.getOrCreate()
+
+pandas_df = pd.read_csv("/root/products.csv", header=None, usecols=[1, 3, 5])
+print(pandas_df)
+
+spark_df = spark.createDataFrame(pandas_df)     # convert to Spark DataFrame
+spark_df.show()
+
+df = spark_df.withColumnRenamed("1", "id").withColumnRenamed("3", “name").withColumnRenamed("5", “remark")
+df.toPandas()       # convert back to Pandas DataFrame
+
+
+
+
+

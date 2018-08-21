@@ -1,0 +1,25 @@
+ Ubuntu中MySql的启动与关闭
+标签： ubuntu mysql
+2016年10月01日 23:53:145026人阅读 评论(0) 收藏  举报
+ 分类： MySQL
+版权声明：本文为博主原创文章，若需转载，请注明出处 https://blog.csdn.net/suwu150/article/details/52719371
+
+如何启动/停止/重启MySQL
+一、 启动方式
+1、使用 service 启动：service mysql start
+2、使用 mysqld 脚本启动：/etc/inint.d/mysql start
+3、使用 safe_mysqld 启动：safe_mysql&
+二、停止
+1、使用 service 启动：service mysql stop
+2、使用 mysqld 脚本启动：/etc/inint.d/mysql stop
+3、mysqladmin shutdown
+三、重启
+1、使用 service 启动：service mysql restart
+2、使用 mysqld 脚本启动：/etc/inint.d/mysql restart
+
+其实有时mysql已经正 常启动了，查看mysql是否启动命令
+ps -aux | grep mysqld
+查看mysql是否在监 听端口命令
+netstat -tl | grep mysql
+会看到如下类似内容
+tcp 0 0 *:mysql *:* LISTEN

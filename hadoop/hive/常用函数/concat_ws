@@ -1,0 +1,18 @@
+hive_CONCAT_WS合并的用法
+2016年05月18日 00:14:47
+阅读数：22884
+从数据库里取N个字段，然后组合到一起用“，”分割显示，起初想到用CONCAT（）来处理，好是麻烦，没想到在手册里居然有提到CONCAT_WS（），非常好用。
+CONCAT_WS(separator, str1, str2,...)
+
+
+它是一个特殊形式的 CONCAT()。第一个参数剩余参数间的分隔符。分隔符可以是与剩余参数一样的字符串。如果分隔符是 NULL，返回值也将为 NULL。这个函数会跳过分隔符参数后的任何 NULL 和空字符串。分隔符将被加到被连接的字符串之间
+
+简单例子如下：
+
+mysql> SELECT CONCAT_WS(",","First name","Second name","Last Name");
+       -> 'First name,Second name,Last Name'
+mysql> SELECT CONCAT_WS(",","First name",NULL,"Last Name");
+       -> 'First name,Last Name'
+
+
+select concat(substr(purchase_date,1,4),'-',cast(ceil(month(purchase_date)/3.0) as string)),transaction_id from transaction_details limit 20

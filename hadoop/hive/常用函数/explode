@@ -1,0 +1,8 @@
+SELECT * FROM table_name
+LATERAL VIEW explode(col1) myTable1 AS myCol1 LATERAL VIEW explode(myCol1) myTable2 AS myCol2;
+
+
+
+
+
+select explode(split(colName,";"))

@@ -1,0 +1,15 @@
+创建hbase表
+create 'users', 'profile', 'region', 'registration'
+create 'user_friend', 'uf'
+create 'events', 'schedule', 'location', 'creator'
+create 'event_attendee', 'euat'
+create 'train', 'eu'
+create 'test', 'eu'
+
+
+java -jar event-ingest-kafka-1.0.0.jar com.it21learning.ingestion.kafka.UserConsumer settings.properties hbase              1
+java -jar event-ingest-kafka-1.0.0.jar com.it21learning.ingestion.kafka.UserFriendsConsumer settings.properties hbase    
+java -jar event-ingest-kafka-1.0.0.jar com.it21learning.ingestion.kafka.EventConsumer settings.properties hbase             1
+java -jar event-ingest-kafka-1.0.0.jar com.it21learning.ingestion.kafka.EventAttendeesConsumer settings.properties hbase    
+java -jar event-ingest-kafka-1.0.0.jar com.it21learning.ingestion.kafka.TrainConsumer settings.properties hbase            1
+java -jar event-ingest-kafka-1.0.0.jar com.it21learning.ingestion.kafka.TestConsumer settings.properties hbase              1 

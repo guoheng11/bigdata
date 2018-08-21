@@ -1,0 +1,165 @@
+1.创建数据库
+    create database if not exists myhivebook;
+2。切换数据库
+    use myhivebook;
+3。显示所有数据库
+    show databases;
+4。显示数据库明细
+    describe database default; --more details than ’show’, such as location
+5。修改数据库的用户
+    alter database myhivebook set owner user dayongd;
+6。删除数据库
+    drop database if exists myhivebook cascade; --cascade强制删除数据库
+
+7。hive表的三联问
+    1。内部表外部表是什么
+    2。区别
+
+8。查询表
+    showtables;showtables'*sam*';showtables'*sam|lily*';
+    showtableextendedlike'o*';
+    desc[formatted|extended]table_name
+    showcreatetabletable_name;
+    showcolumnstable_name;
+     howtblpropertiestblname;
+
+9。建表高级语句（CTAS，CTE）
+    1。CTAS
+     CTAS – Create Table As Select
+     CREATE TABLE ctas_employee as SELECT * FROM employee
+
+     CTAS CANNOT create a partition, external, or bucket table  CTAS with Common Table Expression (CTE)
+    2。CTE
+     CREATE TABLE cte_employee AS
+     WITH
+     r1 AS (SELECT name FROM r2 WHERE name = 'Michael'),
+     r2 AS (SELECT name FROM employee WHERE sex_age.sex= 'Male'), r3 AS (SELECT name FROM employee WHERE sex_age.sex= 'Female') SELECT * FROM r1 UNION ALL SELECT * FROM r3;
+    3。建立一个空表
+     Create table like other table (fast) CREATE TABLE employee_like LIKE employee
+
+10。临时表：链接关闭自动删除（并不一定用）
+    当临时表跟永久表重名是会优先使用临时表。所以为了不混淆建议临时表命名 tmp_tableName
+    不能建立分区分桶
+    CREATE TEMPORARY TABLE tmp_table_name1 (c1 string);
+    CREATE TEMPORARY TABLE tmp_table_name2 AS..
+    CREATE TEMPORARY TABLE tmp_table_name3 LIKE..
+
+11。Hive Table – Drop/Truncate/Alter Table
+    1。DROP TABLE
+    2。TRUNCATE TABLE 清空表数据，只能清空内部表，外部表无法清空
+    3。ALTER TABLE 修改表只会修改元数据，不会修改数据本身
+
+12。partition（分区）
+    1。提高hive性能
+    2。分为动态partion静态partion
+        1。动态分区：需要打开设置   https://www.cnblogs.com/1130136248wlxk/articles/5515304.html
+            hive.exec.dynamic.partition=true；默认是false
+    3。使用场景
+        1。什么时候用静态分区===》有新数据到来
+        2。什么时候用动态分区===》对已存在的数据重新组合
+
+13。分桶
+    设置：set hive.enforce.bucketing=true
+    作用（好处）：
+         1。取样
+         2。提升查询性能
+14。视图VIEW
+    只读，不能增删改
+    并不是太强大了，尽量不用
+    show tables  ==》显示view和table
+    show views   ===》只显示view
+    命名：view_viewName
+
+15。去重，distinct
+    会调用mapreduce
+    distinct多个列时，两个列完全相同才会被去重
+
+16。Virtual Columns虚拟列，隐藏列
+    一些元数据信息
+    INPUT__FILE__NAME, which is the input file's name for a mapper task.
+    BLOCK__OFFSET__INSIDE__FILE, which is the current global file
+
+17。连表查询
+    join ：
+
+18。union 查询  纵向链接
+    注意：两个数据集列名一致
+    union all 不去重执行速度快一些
+    union 去重 执行速度慢一些
+    默认情况union比order by先发生；如果想先排序。那么需要把排序语句用小括号扩起来
+
+19。INSERT overwrite
+    用来想表或者目录中添加数据
+    见PPT第四将 apache hive 进阶实战18页
+
+20。hdfs小文件合并
+    hdfs dfs -getmerge 《table_file_path》
+
+21。order by 排序
+    排序时如何把NULL 值排到最后面：
+            select * from table order by case when col = null then 1 else 0 end;
+            解析：order by case when col = null then 1 else 0 end==》case when 条件 then 1 else 0 end ;
+            其中当条件满足返回1当条件不满足返回0然后升序null为1自然就排在后面
+
+22。sort by 局部排序。每一个reducer局部排序。当 reducer只有一个等于order by
+    distribute by 一般和sort by 一起用
+
+
+23。group by & having + 聚合函数
+    如果过滤条件可以用where表达则用where  ： where更高效
+    having 可以接聚合函数。where不行
+
+24。Hive Window Functions *********难点
+    1。窗口排序
+            PPT 第四讲 Apache hive 33页
+    2。窗口聚合
+             34，35
+    3。窗口分析
+            36，37
+
+25。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    1

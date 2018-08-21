@@ -1,0 +1,177 @@
+1.什么是大数据（3v,4v）
+ volume 数据量大
+ velocity 数据产生速度快   数据处理速度快
+ variety  数据种类多
+ value    数据的价值
+
+2.数据类型（数据结构）
+  结构化 rdms(传统数据库的数据),csv     structured  data
+  半结构化    json，xml（树状结构）   semi structured  data
+  非结构化    音频，视频 ,email,log            unstructured  data
+  区分规则 ： 结构化数据可以定义schema 非结构化数据没有schema
+
+3.如何分析非结构化数据
+  1.分析并理解非结构化的数据  ===》 非结构化数据转化成结构化数据
+
+4.大数据的内在属性
+    1.time based 数据产生的时间戳
+    2。immutable 不可变的（不应该被修改）
+例子：银行数据
+     1。在银行数据库系统中一个用户就一条数据。（被更改后也是一条数据）
+     2。在大数据环境下一个用户每次修改的数据都会有一个时间戳，这个数据都会被存入大数据环境，作为历史数据。所以一个用户可能有多条数据（成百上千）可以分析某一个用户的行为
+        某段时间收入。支出  ====》消费行为，投资情况等
+
+5。大数据可以解决什么问题
+    1。分布式计算（10-20年前就有）
+      传统分布式计算：
+        例子：大型网站一台服务器解决不了问题 （大量用户同时访问）   ===》  web服务器集群 ，数据库集群
+        潜在问题：数据量很大，或请求很耗时满足不了需求（网络传输时间太久：比如几个G数据通过网络传输）
+        通常解决办法：提升每台机器的性能（scale up）纵向扩张 ，
+                    添加服务器台数（scale out）横向扩展=====》大数据分布式计算采用的方式
+      大数据分布式：
+        问题：数据量大（数据传送时间久） ，计算量大。
+        解决：分布式存储,(一台机器存储一部分)
+             分布式计算（就地计算）。代码会被分发到存储数据的每一个节点
+
+6。什么是hadoop
+    1。Google 03，04发布的两篇文章 （分布式存储和分布式计算） 被两个IT大佬实现 ---》hadoop起源
+    2。hdfs分布式存储   mapreduce 分布式计算（解决数据量很大的计算，无法解决计算量大的计算）
+
+7.为什么用hadoop
+    1。存储大数据  2。并行分布式计算
+    3。无共享架构：每台机器之间处理数据是相互隔离的没有依赖关系，处理完之后交给总负责人（reducer）
+    4。伸缩性好===》添加节点就行了
+    5。容错性 ===》
+        数据容错。某节点宕机了会自动进行从新备份
+        计算容错。某节点宕机了会自动在拥有相同数据的备份节点上从新启动计算任务
+    6。可以存储任意格式数据
+
+8。 rdbms               vs         hadoop
+    1.schema ：  读和写都需要schema    读的时候需要格式化
+        好处：每一次数据变换都可能导致数据的丢失   但是大数据环境下存储原始数据   同一个数据源可以服务多个应用改变schema就可以了不会导致数据的丢失
+    2.spaeed ：读取速度快          写入速度快
+        缺点 ：hadoop读取速度没有rdbms快
+    3.governance（数据管理）：  rdbms 数据管理成熟     hadoop没有rdbms管理成熟
+
+    4.processing（处理能力）： rdbms 不要放入太复杂的业务逻辑         hadoop做数据存储和计算
+
+    5.data types    rdbms 只能存储结构化     hadoo 都可以存储
+
+    6.best fit use   rdbms适合实时报表(交互式报表)           hadoop适合批报表（一段时间的统计）
+                     事务性处理ACID                        hadoop做不到
+
+9。hadoop architecture（架构）
+    1。hadoop common
+    2。hadoop distributed file system （HDHFS）        分布式文件系统
+    3。hadoop mapreduce                               分布式计算 引擎   1。0版本还负责任务调度资源管理 2。0不做这个
+    4。hadoop YARN                                    任务调度          1。0版本不存在  2。0有
+    5。hadoop ecosystem （生态系统）
+
+10。两家大数据公司,大数据提供商
+    Cloudera    侧重学术，稳定 版本会相对落后
+    Hortonworks  侧重前沿。商业
+
+11：生态圈介绍
+    1。hafs   数据存储
+    2。zookeeper     管理集群   机器与机器之间的沟通
+    3。flume  现在比较过时。    一般用于处理将web日志迁移到hadoop环境下
+    4。sqoop  RDBMS 数据迁移到hdfs
+    5。hbase  nosql数据库系统鼻祖   第一个nosql数据库系统     有点很棒     缺点API太底层
+    6。mahout hadoop环境下机器学习库  停止维护   。   机器学习被spark替代
+    7。maperduce hadoop计算引擎
+    8。pig    etl工具===》数据变换 基本已经淘汰
+    9。hive   数据仓库   执行引擎 mapreduce，tez ， spark     hive可以取hbase，hdfs，mongodb，Cassandra，oracle 数据
+    10。tez   计算引擎   速度比mapreduce快乐20～30倍
+    11。spark 充当执行引擎  速度是mapreduce 的100多倍
+    12。hcatalog  管理源数据
+    13。ambari  hadoop集群管理界面 hortonworks开发
+
+12。hadoop 的构成
+   1.namenode（NN）   最重要的节点  管理元数据   元数据放在内存里（namenode需要大量内存）
+   2。secondary namenode（SNN） 第二名字服务器  元数据快照  当namenode宕机后，SNN可以辅助namenode元数据恢复
+   3。datanone（DN）  存储数据 处理数据
+   4。客户端一般在集群外面    datanode也可以充当客户端   client
+
+13。hdfs 进程名称以及作用
+    1。secondary namenode 第二名字服务器
+    2。node manager        存在于每个datanode上   管理存放当前datanode信息
+    3。resource manager    存在于每个datanode上   管理每个datanode的resource
+    4。application master  存在于每个datanode上   管理提交给集群的应用程序
+    resource manager   application master 当有需要的时候才会启动
+
+14。心跳机制
+    datanode每隔几秒给namenode发送一个消息（ping一下）保证datanode还在运行
+    默认时间：3秒
+
+15。hadoop中多个客户端同时操作同一个文件
+    可以同时读但是不可以同时写
+
+16。元数据包含内容
+        元数据的分类
+        按形式分类：内存元数据和元数据文件；它们的存在的位置分别为：内存和磁盘上。其中内存元数据主要是hdfs文件目录的管理；元数据文件则用于持久化存储。
+        按类型分，元数据主要包括：
+        1、文件、目录自身的属性信息，例如文件名，目录名，修改信息等。
+        2、文件记录的信息的存储相关的信息，例如存储块信息，分块情况，副本个数等。
+        3、记录HDFS的Datanode的信息，用于DataNode的管理。
+
+        结合上面的介绍，我们知道对于Datanode的信息我们不需要备份，保证可靠性和可维护性，而文件内容的信息也不需要保证可靠性和可维护性，这个等到namenode format之后，Datanode通过心跳机制就可以形成这些信息。而我们只要保证文件、目录的自身的属性信息就可以了。
+        而在Hadoop的HDFS的实现的源码我们可以看到在namenode类中构造器中调用了initialize方法，而这个方法加载了namesystem的一个实例，而在namesystem中属性中包含了三个类的对象，分别是FSdirectory、BlockManager、NavigableMap。FSdirectory主要是对应第一类，BlockManager主要对应文件内容的分块信息，所有的文件的分块信息，NavigableMap主要是Datanode的磁盘使用情况等。
+        内存元数据主要fsimage，而通过checkpoint功能备份的也主要是内存的元数据，我们阅读源码就可以发现这个，具体细
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1。
+
+
+
+
+

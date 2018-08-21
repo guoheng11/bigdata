@@ -1,0 +1,31 @@
+kafka-avro-console-producer \
+         --broker-list localhost:9092 --topic ttt \
+         --property value.schema='{"type":"record","name":"myrecord","fields":[{"name":"f1","type":"string"}]}'
+
+kafka-console-producer \
+         --broker-list localhost:9092 --topic stock_source
+
+kafka-avro-console-consumer --topic stock_source \
+         --bootstrap-server localhost:9092 \
+         --from-beginning
+
+kafka-console-consumer --topic ttt \
+         --bootstrap-server localhost:9092 \
+         --from-beginning
+
+kafka-console-consumer --topic streams-wordcount-output --from-beginning \
+--new-consumer --bootstrap-server localhost:9092 \
+--property print.key=true \
+--property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
+
+
+
+kafka-topics --zookeeper localhost:2181 --list
+
+
+         监听是否有文件进来
+         kafka-console-consumer --zookeeper localhost:2181 --topic stock_source
+
+         创建
+         kafka-topics --zookeeper localhost:2181 --create --topic ttt --partitions 1 --replication-factor 1
+         ./kafka-topics.sh --zookeeper localhost:2181 --create --topic ttt --partitions 1 --replication-factor 1

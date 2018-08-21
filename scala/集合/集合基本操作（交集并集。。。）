@@ -1,0 +1,4 @@
+var s=Set("ab","yz")
+    var t = Set("ab","cd","fg","jk","hj")
+    var st=s&t   //交集
+

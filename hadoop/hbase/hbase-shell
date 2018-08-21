@@ -1,0 +1,11 @@
+1。get 查询(查询某行或者行内单元格)
+        get 'tblname' 'rowid','columnsFamily'
+        get 'tblname' 'rowid','columnsFamily:columns'
+        get 'tblname' 'rowid',{COLUMNS=>['columnsFamily:col','columnsFamily']}
+        get ''
+2。scan 查询多行
+        scan 'tblname'
+
+
+3。put添加数据
+        put 'tblname','rowid','columnsFamily:columns','value'     ('value'表示要插入的值)

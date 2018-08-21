@@ -1,0 +1,1 @@
+https://github.com/datafibers/big_data_training/tree/master/hive

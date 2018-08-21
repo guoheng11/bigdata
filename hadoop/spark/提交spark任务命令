@@ -1,0 +1,10 @@
+1.打开端口
+export SPARK_SUBMIT_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8086
+                         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8086
+
+2.通过spark-submit提交
+spark-submit --class com.it21learning.Driver --master yarn --deploy-mode client ./event-etls_2.11-1.0.jar a b
+spark-submit  --master yarn --deploy-mode client --class com.it21.Driver ./spark_etl_gh_2.11-0.1.jar a b
+
+3.scp移动jar包
+scp -P 2222 /Users/guoheng/Sites/ideaProject/spark/target/scala-2.11/event-etls_2.11-1.0.jar root@192.168.5.45:/root/workspace/

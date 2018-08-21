@@ -1,0 +1,12 @@
+1.关于开启和关闭mysql服务：
+启动MySQL服务
+sudo /usr/local/MySQL/support-files/mysql.server start
+
+停止MySQL服务
+sudo /usr/local/mysql/support-files/mysql.server stop
+重启MySQL服务
+sudo /usr/local/mysql/support-files/mysql.server restart
+服务假死，强行将服务停用
+sudo killall mysqld;
+2.登陆---》
+mysql -uroot -proot   （-u后直接跟账户名；；；；-p后直接跟密码

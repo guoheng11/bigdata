@@ -1,0 +1,11 @@
+1。三个核心组建
+    1。Flink Master
+    2。flink node
+    3。webUI
+
+2。有点
+    Apache Flink是一个开源流处理框架。
+    事件时间处理
+    状态和容错
+    低延迟
+    高吞吐量

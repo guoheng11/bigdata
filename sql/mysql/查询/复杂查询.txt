@@ -1,0 +1,288 @@
+
+1 课程计划
+基本查询
+分组和排序
+Mysql的数据备份和恢复
+多表关联查询
+2 查询语句
+2.1 基本查询一
+	语法：select 表达式(列名执行运算) from 表名。
+	Select 列名 as 别名 from 表名。
+	案例：
+		在所有学生分数上加5分--- select name,chinese+5,math+5,english+5 from student;
+		统计每个学生的总分数---select name,chinese+math+english from student;
+		使用别名表示学生分数---select name,chinese+math+english as 总分 from student;
+
+注意事项：
+		在使用别名的时，as可以省略
+		select name,math from student; 查询name和math两列的值
+		select name math from student; 查询name列值，别名为math
+
+2.2 基本查询二
+	语法：select 列名 from 表名 where条件语句
+	案例：
+		查询姓名为张三的学生成绩---select * from student where name = ‘张三’;
+		查询英语成绩大于80分的同学---select * from student where English > 80;
+		查询总分大于220分的所有同学---select * from student where chinese+math+English > 220;
+
+相等 =   不等<>
+between ….and 在两者之间取值 between 70 and 80 等价于 >=70 <=80 注意前面的数一定要比后面的数要小。
+in(值,值,值,…)在指定值中任取一个in(100,200,300) 值可以是100,200,300
+like 可以进行模糊查询，可以使用二个符号，第一个% 任意字符串 第二个 _ 任意单个字符， name like ‘张%’ 所有姓张的学员。 Like ‘张_’ 所有姓张的名字为二个字的学生。
+is null 判断该列非空
+and 逻辑与 or 逻辑或 not 逻辑非
+
+案例：
+查询英语分数在90-100之间的学员
+Select * from student where English >=90 and English <= 100;
+select * from student where english between 90 and 100;
+查询数学分80 85 90分的同学。
+Select * from student where math in(80,85,90)
+查询所有姓张学生的成绩。
+Select * from student where name like ‘张%’
+查询英语分>80,语文分>80的学生。
+Select * from student where English > 80 and chinese > 80;
+查询没有语文成绩的学员
+select * from student where chinese is null;
+查询有语文成绩的学员
+select * from student where chinese is not null;
+
+2.3 基本查询三
+	语法：select * from 表名 order by列名 asc|desc
+	Asc:升序
+	Desc：降序
+
+
+
+	案例：
+对数学成绩排序后输出。
+select * from student order by math; //默认是asc升序
+对总分排序按从高到底排序
+select * from student oerder by math+chinese+English desc;
+对学生成绩按照英语进行降序，英语相同按照数学降序
+select * from student order by english desc,math esc;
+3 聚集函数
+	聚集函数 指的是SQL语句中内置函数 ------分组函数(用于统计)
+3.1 count 函数
+	count 统计查询结果记录条数： select count(*|列名)from from 表名
+
+案例：
+	统计一个班级共有多少学生?
+		select count(*) from student;
+	统计英语成绩大于90分的学生有多少个?
+		select count(*) from student where English > 90;
+	统计总分大于220分的人数有多少
+		select count(*) from student where chinese+math+english > 220;
+
+3.2 sum 函数
+	统计某一列数据的和 select sum(列名) from 表名;
+
+案例：
+	统计一个班级数学总成绩
+		select sum(math) from student;
+	统计一个班级语文，英语，数学各科的总成绩
+		select sum(chinese), sum(math),sum(english) from student;
+	统计一个班级语文，英语，数学的成绩总和
+		select sum(chinese+math+english) form student; 不对？
+			不包括赵六的英语和
+		select sum(chinese)+sum(math)+sum(english) from student; 对了
+			含有赵六英语和数学成绩
+	*** 因为赵六的语文成绩是NULL NULL进行所有运算 结果都是NULL
+
+
+解决方式：可以使用 ifnull函数处理null的情况
+	select sum(ifnull(chinese,0)+ifnull(math,0)+ifnull(English,0)) from student;
+
+3.3 avg 函数
+	avg 统计某一列平均值 select avg(列名) from 表名;
+	案例：
+		求班数学平均分?
+			select avg(math) from student;
+		求班级总分平均分?
+			select avg(ifnull(chinese,0)+ifnull(math,0)+ifnull(english,0)) from stude
+nt;
+
+3.4 max和min
+ max 统计一列最大值
+min 统计一列最小值
+	案例：
+		求班级最高分和最低分
+			select max(chinese+math+english),min(ifnull(chinese,0)+math+english) from student;
+4 分组操作
+语法：select 分组函数 from 表 group by 列名; 按照谬列进行分组统计
+分组操作，就是具有相同数据记录分到一组中，便于统计。
+
+
+
+
+
+
+
+
+案例：
+	create table orders(
+		id int,
+		product varchar(20),
+		price float
+);
+
+插入数据：
+	insert into orders values(1,'电视',900);
+	insert into orders values(2,'洗衣机',100);
+	insert into orders values(3,'笔记本',90);
+	insert into orders values(4,'电冰箱',2000);
+	insert into orders values(5,'笔记本',90);
+
+案例：
+	对订单表中的商品归类后，显示每一类商品的总价---按照商品名称进行分组
+	select produt sum(price) from orders group by product;
+
+	查询购买了几类商品，并且每类总价大于200的商品。
+select product,sum(price) from orders group by product having sum(price)
+> 200;
+
+在grpup by语句后面，添加having条件语句 --- 对分组查询结果过滤
+
+面试中：where和having 条件语句的区别?
+Where 是在分组前进行条件过滤，having是在分组后进行条件过滤。
+使用where的地方都可以使用having替换，但是having可以使用分组函数，而where后面不可以使用分组函数。
+先会执行from 然后执行条件过滤，之后再进行分组 group by – having(过滤)
+5 数据备份和恢复
+	因为在实际的开发中经常会涉及到数据备份的问题，我们需要掌握mysql通用的数据备份的方式。
+5.1 数据备份
+	1. 可以使用命令mysqldump进行数据备份，这也是主流的数据备份的方式。
+	在mysql的安装目录的bin目录下面。
+
+
+	案例：
+		备份mydb2这个数据库
+		语法： mysqldump –u 用户名 –p 数据库名 > 磁盘SQL文件存放路径
+		mysqldump -u root -p mydb2 > c:\mydb2.sql
+5.2 数据恢复
+	因为数据备份导出的是表和数据，但是在数据恢复的时候需要指定恢复数据到那个数据库，所以我们要创建一个数据库然后把表和数据进行恢复就可以了。
+	语法：source 本地磁盘路径
+source c:\mydb2.sql
+	注意：恢复数据必须要指定数据库。
+
+
+6 多表设计-外键约束
+外键约束是为了保证数据的完整性。
+
+案例：
+	公司业务的发展需要开发软件系统来管理员工信息，所以需要设计数据库表
+
+	员工表：
+		create table employee(
+			id int primary key auto_increment,
+			name varchar(20),
+			job varchar(20),
+			salary double
+);
+
+	insert into employee values(1,’张三’,’销售员’,4000);
+insert into employee values(2,’李四’,’采购员’,6000);
+insert into employee values(3,’王五’,’java工程师’,14000);
+insert into employee values(4,’赵六’,’C++工程师’,14000);
+
+
+
+
+	部门表：
+		create table department(
+			id int primary key auto_increment,
+			name varchar(20)
+);
+		insert into department values(1,’销售部’);
+		insert into department values(2,’采购部’);
+		insert into department values(3,’研发部’);
+
+
+	让员工表和部门表发生关系，知道员工属于那个部门的，在员工表添加部门id字段
+	alter table employee add dept_id int;
+
+	修改员工表的数据
+	update employee set dept_id=1 where id = 1;
+	update employee set dept_id=2 where id = 2;
+	update employee set dept_id=3 where id = 3;
+	update employee set dept_id=3 where id = 4;
+
+
+
+	新的需求：公司因为财务问题，要解散研发部
+	delte from department where name = ‘研发部’;
+	如果删除了研发部，那么研发部下面的员工就没有了部门，这样会导致数据的不完整性。
+
+
+	解决方案：
+		Empoyee表中dept_id字段引用 department表中的Id字段---添加外键约束(保证数据的完整性)
+		将empoyee表中dept_id字段设置为外键约束
+		alter table employee add foreign key(dept_id) references department(id);
+		添加外键约束不能有数据存在，不然会报错。
+
+
+		因为业务发展需要删除采购部，添加外键约束之后如果想要删除采购部，那么需要先删除采购部的员工。
+
+
+
+7 多表设计中的三种实体关系
+多表设计原则：
+	所有关系数据值能存在三种对应关系(一对一，一对多，多对多)
+
+
+
+7.1 多对多关系
+	1. 多对多关系： 用户和角色
+	描述：一个用户可以拥有多个角色，一个角色可以属于多个用户。
+
+	总结：如果数据表是对多的关系那么需要创建一张表，把二张关系表的外键引入。
+
+7.2 一对多
+1. 一对多和多对一和相同的。
+	描述：作者和小说，一个作者可以发表多篇小说，一篇小说只能由一个作者发表。
+
+建表原则：在多的一方添加一的一方的主键作为外键。
+7.3 一对一
+	这种关系在实际应用中很少见，比如说公司和总经理
+	一个总经理管理一个公司
+一个公司只有一个总经理
+
+建表原则：在任何一方添加对方的主键，作为外键。
+
+
+8 多表查询
+多表查询——笛卡尔积
+	案例：
+		商品表
+		create table product(
+			product_id int primary key auto_increment,
+			product_name varchar(20) not null
+);
+
+商品价格表
+create table price(
+	pp_id id int primary key auto_increment,
+	pp_price double
+);
+	select * from product,price; 显示结果就是笛卡尔积
+	笛卡尔积的结果，就是两个表的乘积，如果product和price表都是三条记录，那么记过就是9条记录。
+
+
+	笛卡尔积产生的结果是无效的，必须从笛卡尔积中选取有效的数据结果。
+
+	多表查询-内连接查询
+	从A表中选择一条记录，去B表中找对应记录--- 内连接查询必须A表和B表存在对应记录才会显示。
+
+	使用内链接查询从笛卡尔积中取有效的数据
+	语法：select * from a,b where a.a_id = b.a_id;
+	select * from product,price where product.product_id = price.price_id;
+
+
+	案例：
+		查询技术部门有那些员工
+		select * from employee,department where employee.id=department.id and department.name = “技术部”;
+		查询工资大于10000的是来自于那个部门
+		select * from employee,department where employee.id = department.id and e
+mployee.salary > 10000;
+	内连接查询写法：
+		select * from a,b where a.aid=b.aid 写法一 (推荐)
+		select * from a inner join b on a.aid = b.aid 写法二

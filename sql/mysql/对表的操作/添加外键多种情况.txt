@@ -1,0 +1,63 @@
+mysql添加外键
+为已经添加好的数据表添加外键:
+语法:alter table 表名 add constraint FK_ID foreign key(你的外键字段名) REFERENCES 外表表名(对应的表的主键字段名);
+例: alter table tb_active add constraint FK_ID foreign key(user_id) REFERENCES tb_user(id)
+//FK_ID是外键的名称
+/*
+CREATE TABLE `tb_active` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+ `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+ `user_id` int(11) NOT NULL,
+ PRIMARY KEY (`id`),
+ KEY `user_id` (`user_id`),
+ KEY `user_id_2` (`user_id`),
+ CONSTRAINT `FK_ID` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+*/
+
+
+删除外键
+语法： ALTER TABLE table-name DROP FOREIGN KEY key-id;
+例：   ALTER TABLE `tb_active` DROP FOREIGN KEY `FK_ID`
+
+
+
+自动键更新和删除：
+外键可以保证新插入的记录的完整性，但是，如果在REFERENCES从句中已命名的表删除记录会怎么样？在使用同样的值作为外键的辅助表中会发生什么?
+
+ 很明显，那些记录也应该被删除，否则在数据库中就会有很多无意义的孤立记录，MYSQL可以通过向FOREIGN KEY...REFERENCES修饰符添加一个ON DELETE 或ON UPDATE子句简化任务，它告诉了数据库在这种情况如何处理孤立任务
+
+ 关键字     含义
+ CASCADE    删除包含与已删除键值有参照关系的所有记录
+ SET NULL   修改包含与已删除键值有参照关系的所有记录，使用NULL值替换（只能用于已标记为NOT NULL的字段）
+ RESTRICT   拒绝删除要求，直到使用删除键值的辅助表被手工删除，并且没有参照时(这是默认设置，也是最安全的设置)
+ NO ACTION  啥也不做
+
+ 请注意，通过ON UPDATE 和 ON DELETE规则，设置MYSQL能够实现自动操作时，如果键的关系没有设置好，可能会导致严重的数据破坏，
+ 例如：如果一系列的表通过外键关系和ON DELETE CASCADE 规则连接时，任意一个主表的变化都会导致甚至只和原始删除有一些将要联系的记录在没有警告的情况被删除，所以，我们在操作之前还要检查这些规则的，操作之后还要再次检查.
+
+
+
+添加外键
+alter table locstock add foreign key locstock_ibfk2(stockid) references product(stockid)
+locstock 为表名, locstock_ibfk2 为外键名 第一个括号里填写外键列名, product为表名,第二个括号里是写外键关联的列名
+
+删除外键
+alter table locstock drop foreign key locstock_ibfk2
+
+查看表有哪些外键
+show create table locstock
+
+[CONSTRAINT symbol] FOREIGN KEY [id] (index_col_name, ...)
+    REFERENCES tbl_name (index_col_name, ...)
+    [ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+    [ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+
+
+         所有tables必须是InnoDB型 ，它们不能是临时表。
+·         在引用表中，必须有一个索引，外键列以同样的顺序被列在其中作为第一列。这样一个索引如果不存在，它必须在引用表里被自动创建。
+·         在引用表中，必须有一个索引，被引用的列以同样的顺序被列在其中作为第一列。
+·         不支持对外键列的索引前缀。这样的后果之一是BLOB和TEXT列不被包括在一个外键中， 这是因为对这些列的索引必须总是包含一个前缀长度。
+·         如果CONSTRAINTsymbol 被给出，它在数据库里必须是唯一的。如果它没有被给出，InnoDB自动创建这个名字。
+　　

@@ -1,0 +1,25 @@
+1.rdd=>ds
+
+case class Order(order_id:Int,order_date:String,order_customer_id:Int,order_status:String)
+
+val rddOrders = spark.sparkContext.textFile("/root/retail_db/orders.csv").map(line=>line.split(",").map(y => if(y==null) "" else y.replace("\"",""))).map(x=>Order(x(0).toInt,x(1),x(2).toInt,x(3)))
+val dsOrders = spark.createDataset(rddOrders)
+dsOrders.filter(o => o.order_id==1).show
+
+2.df=>ds
+case class OrderItem(order_item_id:Int,order_item_order_id:Int,order_item_product_id:Int,order_item_quantity:Int,order_item_subtotal:Double,order_item_product_price:Double)
+val dfItems=spark.read.format("csv").option("header","false").option("delimiter",",").option("escape","\"").load("/root/retail_db/order_items.csv").select(
+    col("_c0").cast(IntegerType).as("order_item_id"),
+    col("_c1").cast(IntegerType).as("order_item_order_id"),
+    col("_c2").cast(IntegerType).as("order_item_product_id"),
+    col("_c3").cast(IntegerType).as("order_item_quantity"),
+    col("_c4").cast(DoubleType).as("order_item_subtotal"),
+    col("_c5").cast(DoubleType).as("order_item_product_price")
+    )
+    // dfItems.printSchema
+    val dsItems = dfItems.as[OrderItem]
+    dsItems.show(10)
+
+3.seq=>ds
+case class Po(id:Int,name:String)
+val dsPo=Seq(Po(1,"gh"),Po(2,"gh1")).toDS

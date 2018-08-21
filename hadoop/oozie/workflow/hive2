@@ -1,0 +1,53 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="hive2-wf">
+    <start to="hive2-node"/>
+
+    <action name="hive2-node">
+        <hive2 xmlns="uri:oozie:hive2-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}/user/${wf:user()}/${examplesRoot}/output-data/hive2"/>
+                <mkdir path="${nameNode}/user/${wf:user()}/${examplesRoot}/output-data"/>
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <jdbc-url>${jdbcURL}</jdbc-url>
+            <script>demo.hql</script>
+            <param>INPUT=/user/${wf:user()}/${examplesRoot}/input-data/table</param>
+            <param>OUTPUT=/user/${wf:user()}/${examplesRoot}/output-data/hive2</param>
+        </hive2>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Hive2 (Beeline) action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>
+
+
+
+
+
+
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="hive_oozie_demo">
+<start to="start"/>
+<action name="start">
+<hive2 xmlns="uri:oozie:hive2-action:0.1">
+<job-tracker>${jobTracker}</job-tracker> <name-node>${nameNode}</name-node> <configuration>
+<property> <name>mapred.job.queue.name</name> <value>${queueName}</value>
+</property> </configuration>
+<jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url> <password>password</password> <script>demo.hql</script>
+</hive2>
+<ok to="end"/> <error to="fail"/>
+</action>
+<kill name="fail">
+<message>ETL task(d) failed, The error message is [${wf:errorMessage(wf:lastErrorNode())}]</message>
+</kill>
+<end name="end"/>
+</workflow-app>

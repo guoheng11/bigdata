@@ -1,0 +1,51 @@
+python字典遍历的几种方法
+（1）遍历key值
+复制代码
+>>> a
+{'a': '1', 'b': '2', 'c': '3'}
+>>> for key in a:
+       print(key+':'+a[key])
+
+a:1
+b:2
+c:3
+>>> for key in a.keys():
+       print(key+':'+a[key])
+
+a:1
+b:2
+c:3
+复制代码
+在使用上，for key in a和 for key in a.keys():完全等价。
+
+（2）遍历value值
+>>> for value in a.values():
+       print(value)
+
+1
+2
+3
+（3）遍历字典项
+
+>>> for kv in a.items():
+       print(kv)
+
+('a', '1')
+('b', '2')
+('c', '3')
+（4）遍历字典健值
+
+复制代码
+>>> for key,value in a.items():
+       print(key+':'+value)
+
+a:1
+b:2
+c:3
+>>> for (key,value) in a.items():
+       print(key+':'+value)
+
+a:1
+b:2
+c:3
+复制代码

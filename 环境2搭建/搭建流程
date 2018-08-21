@@ -1,0 +1,4 @@
+1.安装virtualbox和vagrant
+2.把需要替换的文件替三个文件
+3.下载都老师那个文件 cd到lab_env目录下
+4。执行vagrant up

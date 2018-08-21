@@ -1,0 +1,30 @@
+
+    1。技术选型：java,scala,kafka,hdfs,hbase,hive,sparkML
+    1。项目名称：用户兴趣取向分析
+        项目介绍
+        对用户参加活动的日志信息进行收集，清洗，数据格式转换并将数据存储在hbase中。在数据仓库hive中建立基础表读取hbase中数据。
+        根据基础表进行ETL变换分别生成训练数据集和测试数据集。利用sparkML机器学习库进行数据建模。根据模型和测试数据集进行预测
+        计算模型预测的准确率优化模型
+
+        1。将日志信息通过producer送入kafka
+        2。将kafka中topics写入hbase中存储
+        3。将hbase中数据读入hive中建立基础表
+        4。在hive中做ETL变换提取具有影响用户是否参加活动的特征数据模型
+        5。通过sparkML机器学习库将特征数据集进行进行训练生成训练模型
+        6。对模型进行优化
+
+    2。用户行为分析
+        1。data masking
+            加密 unbase64
+                1。lastName加密；email加密；地址加密  ====》unbase64（colName）
+                2。行用卡号加密：unbase64(concat(unbase64(credit_no), 'seed')) 这种加密没办法破解
+                3。base64(regexp_replace(base64(credit_no), unbase64('seed'), '')) 对加密数据进行解密
+        2。将transaction_details表进行动态分区
+        3。
+        数据清洗要求：
+         transaction_details中的重复数据，对重复数据生成新ID ◆ 过滤掉store_review中没有评分的数据
+        可以把清洗好的数据放到另一个表或者用View表示
+        找出PII (personal information identification) 或PCI (personal confidential information) 数据进行加密或 hash
+        重新组织transaction数据按照日期YYYY-MM做分区
+
+    3。流数据处理

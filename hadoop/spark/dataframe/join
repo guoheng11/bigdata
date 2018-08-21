@@ -1,0 +1,12 @@
+val df = dfOrder.alias("o").join(dfItems.alias("i"),col("o.order_id") === col("i.order_item_order_id"),"left_outer")
+.select(
+    col("o.order_id").as("order_id"),
+    col("o.order_customer_id").as("order_customer_id"),
+    col("i.order_item_subtotal").as("order_item_subtotal")
+    )
+    .groupBy(col("order_id"),col("order_customer_id")).agg(sum(col("order_item_subtotal")).as("order_total"))
+    .select(
+        col("order_id"),
+        col("order_customer_id"),
+        col("order_total")
+        ).sort(col("order_total").desc)

@@ -1,0 +1,47 @@
+1.网址
+https://docs.confluent.io/current/connect/references/restapi.html#put--connectors-(string-name)-resume
+2。插件查询
+ http://localhost:8083/connector-plugins/
+ 3。查询每个connector的情况
+get: http://localhost:8083/connectors/finance_source_connector_01/config
+get: http://localhost:8083/connectors/finance_source_connector_01/status
+4.添加一个connector
+post
+mysql ：
+*****************
+ {
+name:"connectorName",
+config:{
+ "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "2",
+    "topics": "stock_source",
+    "connection.url": "jdbc:mysql://localhost:3306/simple_stream",
+    "connection.user": "test",
+    "connection.password": "123456",
+    "auto.create": "true"
+}
+}
+*****************
+hdfs&&hive:
+//cuid意义不大但是必须写（自定义的sourceConnector）
+*******************
+{
+ "name": "finance_source_connector_01",
+    "config": {
+        "connector.class": "com.datafibers.flink.stream.FinanceSourceConnector",
+        "spoof": "RAND",
+        "schema.registry.uri": "http://localhost:8081",
+        "cuid": "finace_source_connector_01",
+        "portfolio": "Top 10 IT Service",
+        "tasks.max": "1",
+        "name": "finance_source_connector_01",
+        "topic": "stock_source",
+        "interval": "5"
+        }
+}
+*******************
+5改变状态：
+get: http://localhost:8083/connectors/finance_source_connector_01/restart
+get: http://localhost:8083/connectors/finance_source_connector_01/pause
+get: http://localhost:8083/connectors/finance_source_connector_01/resume
+

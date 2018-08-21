@@ -1,0 +1,143 @@
+1。4v ===>
+
+2.处理类型
+    1。一条一条处理
+    2。基于window处理方式
+
+3。关注问题
+    1。流处理的速度  （min batch）
+    2。大吞吐量
+
+4。流处理
+    优势：速度
+    缺点：牺牲了复杂度；不适用于做复杂的处理
+    总结：为了速度牺牲复杂度
+
+5。解决问题
+    1。能决解：
+        1。简单的关联，简单的抽样，特定时间段的聚合
+    2。不能解决：跨时间段的聚合（不擅长或不能做）
+
+6。用例：
+    点击流和网络分析
+    基于位置/ GPS的营销
+    社交网络中的消息（Twitter，游戏等）
+    音乐/视频流（Spotify，Netflix等）
+    财务数据（股票变动，信用卡tx）
+    交通/安全控制（网络，高速公路）
+    能源生产/消费/优化
+    传感器网络
+    天气监测
+    监控主机入侵
+
+7。Batch vs. Stream
+    Scope        Queries over all or most of the data in the dataset.
+                 Queries or processing over data within a rolling time window, or on just the most recent data record.
+
+    Size        Large numbers of records
+                Individual records or micro batches consisting of a few records.
+
+    Performance     Latencies in minutes to hours.
+                    Requires latency in the order of seconds or milliseconds.
+
+    Analyses        Complex analytics.
+                    Simple response functions, aggregates, and rolling metrics.
+
+     范围           查询数据集中的所有或大多数数据。
+                   在滚动时间窗口内或仅在最新的数据记录上查询或处理数据。
+
+     大小           大量记录
+                    由少数记录组成的单个记录或微批次。
+
+     性能延迟       以分钟到小时为单位。
+                    需要等待秒或毫秒的延迟。
+
+  分析复杂的分析。      简单的响应函数，
+                       聚合和滚动指标。
+
+8。发展历程===》架构
+    1。第一种模式（阶段）
+        1。收集数据
+        2。储存数据==》HDFS
+        3。批处理
+        4。通过BI工具展示数据或者构建ML模型
+
+    2。第二种模式（阶段）
+        1。收集速度
+        2。流处理数据（微批处理）
+            2。1 数据存储
+            2。2 数据展示
+
+    3。第三中模式（阶段）
+        1。收集数据
+        2。流数据  ===》存储数据
+        3。流数据处理
+        4。展示数据
+
+9。数据光纤
+
+10。mongDB工具
+    robomongo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   1
+
+
+    
+                    
+
+   
+                    

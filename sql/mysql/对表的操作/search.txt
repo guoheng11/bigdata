@@ -1,0 +1,23 @@
+查询表结构　　
+
+　　　　　　　　　　　　　　2.1、查看表基本结构语句
+
+　　　　　　　　　　　　　　　　　　　　格式1：DESCRIBE 表名/DESC 表名　　这两个的功能是一样的，简写了单词describe
+
+　　　　　　　　　　　　　　　　　　　　　　DESCRIBE　student;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　2.2、查看创建表的语句　
+
+　　　　　　　　　　　　　　　　　　　　格式：SHOW CREATE TABLE 表名
+
+　　　　　　　　　　　　　　　　　　　　　　SHOW CREATE TABLE student;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　　　　　　　　　这样显示的格式很不好，看不清楚，所以有了下面这个语句
+
+　　　　　　　　　　　　　　　　　　　　格式：SHOW CREATE TABLE 表名\G
+
+　　　　　　　　　　　　　　　　　　　　　　SHOW CREATE TABLE student\G;

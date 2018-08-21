@@ -1,0 +1,32 @@
+1。流程
+    1。传感器收集传送数据到kafka或者flume
+    2。spark-streaming从以上获取数据进行流处理
+    3。流数据写入hdfs（短期可以小文件太多），直接进去hbase，kafka
+
+2。micro-batch微批处理
+    速度比较：2。3。1之前 100毫秒的延迟 之后1毫秒的延时
+
+3。sparkStreaming只能存在一个
+
+4。Dstream  离散数据流
+    小量RDD
+
+5。receivers
+    1。作用
+    将一条数据转换成实例对象
+    2。当数据来的太快
+    创建多个receiver===》加快拿数据的速度
+    3。
+
+6。流数据源
+    1。网络端口监听  socketStream
+    2。基于文件的数据源  fileStream
+        当文件发生变化就会产生流数据（例如日志文件）
+    3。实际产品环境
+        kafka，flume，nifi作为数据源
+
+7。注意事项：
+    local[n]  n>number of receiver
+    n表示线程数大于receiver数量
+
+8。

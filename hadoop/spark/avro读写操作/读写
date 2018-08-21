@@ -1,0 +1,36 @@
+df.write.format("com.databricks.spark.avro").save("fileName")
+//自动加载avro的环境
+spark-shell --packages com.databricks:spark-avro_2.11:4.0.0
+//加载jar包
+spark-shell --jars gh/sparkJar/spark-avro_2.11-4.0.0.jar
+//读取df
+import  org.apache.spark.sql.functions._
+import org.apache.spark.sql.types._
+val df1 = spark.read.format("csv").option("header","false").option("delimiter",",").option("escape","\"").load("/root/gh/customers.csv").withColumn("customer_id",col("_c0").cast(IntegerType))
+.withColumnRenamed("_c1","customer_fname")
+.withColumnRenamed("_c2","customer_lname")
+.withColumnRenamed("_c3","customer_email")
+.withColumnRenamed("_c4","customer_password")
+.withColumnRenamed("_c5","customer_street")
+.withColumnRenamed("_c6","customer_city")
+.withColumnRenamed("_c7","customer_state")
+.withColumnRenamed("_c8","customer_zipcode")
+.select("customer_id","customer_fname","customer_lname","customer_email","customer_password","customer_street","customer_city","customer_state","customer_zipcode")
+
+
+df1.write.format("com.databricks.spark.avro").mode("overwrite").save("file:///root/gh/avro/customers")
+val df_avro=spark.read.format("com.databricks.spark.avro").load("file:///root/gh/avro/customers")
+
+
+
+nums  t
+//假如是升序排列
+int i = 0
+for（i；i<nums.length;i++ ）{
+if(t<num[i]){
+continue;
+
+}else{{
+}
+}}
+}

@@ -1,0 +1,19 @@
+1. Get stock information with following portofolio by parameters
+("Top 10 IT Service", "ACN,CTSH,EPAM,GIB,DOX,SAIC,FORR,INFY,WIT,INXN");
+("Top 10 Technology", "GOOGL,MSFT,AMZN,BABA,ORCL,IBM,HPE,SAP,FB,EBAY");
+("Top 10 US Banks", "ASB,BANC,BXS,BAC,BOH,BK,BBT,JPM,COF,C");
+("Top 10 US Telecom", "WIN,FTR,CTL,CNSL,BCE,T,VZ,CHT,SHEN,ALSK");
+("Top 10 Life Insurance", "AEK,AEG,SLF,MET,MFC,PRU,ANAT,FFG,LNC,PUK");
+
+2. Print out stock information for each symbol with following schema
+
+     {"name": "refresh_time",   "type": "string"},
+     {"name": "symbol",         "type": "string"},
+     {"name": "company_name",   "type": "string"},
+     {"name": "exchange",       "type": "string"},
+     {"name": "open_price",     "type": "double"},
+     {"name": "ask_price",      "type": "double"},
+     {"name": "ask_size",       "type": "int"},
+     {"name": "bid_price",      "type": "double"},
+     {"name": "bid_size",       "type": "int"},
+     {"name": "price",          "type": "double"}

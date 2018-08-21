@@ -1,0 +1,28 @@
+
+第一步： # 在hive  *.hql的 每个文件中加入
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+set hive.optimize.sort.dynamic.partition=true;
+
+set hive.auto.convert.join=false;
+
+第二步：
+
+将hive 的执行引擎改为 MapReduce
+
+第三步：# 将MapReduce的参数更改
+
+# 这个是默认的  MAPRED.CHILD.JAVA.OPTS=-Xmx200m
+
+MAPRED.CHILD.JAVA.OPTS = -Xmx2G -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit
+
+第四步： 重启服务
+
+yarn
+
+MapReduce2
+
+hive
+
+oozie

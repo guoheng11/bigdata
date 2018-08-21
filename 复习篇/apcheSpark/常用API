@@ -1,0 +1,8 @@
+1。
+    import sys.process._
+
+    sc.parallelize(List(1,2,3,4,5))
+    rdd.partitions.size
+
+    精确到每一个partition的操作
+    RDD.mapPartitionWithIndex  ((idx,iter)=>if(idx==1) iter else Iterator())

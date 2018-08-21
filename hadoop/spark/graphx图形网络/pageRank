@@ -1,0 +1,7 @@
+import org.apache.spark.graphx.GraphLoader
+
+val fGraph=GraphLoader.edgeListFile(sc,"/root/gh/followers.txt")
+
+val fGraph=graph.pageRank(0.0001)
+
+nGraph.vertices.sortBy(_._2,false).collect

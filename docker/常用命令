@@ -1,0 +1,4 @@
+1.执行“docker stop $(docker ps -a -q)”  用来停止停止所有的container
+2.docker images 查看镜像列表
+3.docker rmi 147051a21fd9 删除上图的第二个镜像147051a21fd9 为IMAGE_ID
+4.docker images再次查看镜像列表，发现被删除

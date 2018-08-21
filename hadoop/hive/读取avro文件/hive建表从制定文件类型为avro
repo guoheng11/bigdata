@@ -1,0 +1,47 @@
+create table CUSTOMERS
+row format serde 'org.apache.hadoop.hive.serde2.avro.AvroSerDe'
+stored as inputformat 'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat'
+ outputformat 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
+tblproperties ('avro.schema.literal'='{
+ "name": "customer", "type": "record",
+ "fields": [
+ {"name":"customer_id", "type":"int"},
+ {"name":"customer_fname", "type":"string"},
+ {"name":"customer_lname", "type":"string"},
+ {"name":"customer_email", "type":"string"},
+ {"name":"customer_password", "type":"string"},
+ {"name":"customer_street", "type":"string"},
+ {"name":"customer_city", "type":"string"},
+ {"name":"customer_state", "type":"string"},
+ {"name": "customer_zipcode", "type": "string"}
+ ]}');
+
+
+
+ hdfs dfs -put /root/gh/avro/customers/customers.avro /root/gh/avro/customers/customers.avro
+
+
+ CREATE EXTERNAL TABLE IF NOT EXISTS CUSTOMERSAVRO
+   ROW FORMAT SERDE
+   'org.apache.hadoop.hive.serde2.avro.AvroSerDe'
+   STORED AS INPUTFORMAT
+   'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat'
+   OUTPUTFORMAT
+   'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
+   LOCATION 'hdfs://sandbox-hdp.hortonworks.com:8020/root/gh/avro/customers'
+   TBLPROPERTIES ('avro.schema.literal'='{
+                  "name": "customer", "type": "record",
+                  "fields": [
+                  {"name":"customer_id", "type":"int"},
+                  {"name":"customer_fname", "type":"string"},
+                  {"name":"customer_lname", "type":"string"},
+                  {"name":"customer_email", "type":"string"},
+                  {"name":"customer_password", "type":"string"},
+                  {"name":"customer_street", "type":"string"},
+                  {"name":"customer_city", "type":"string"},
+                  {"name":"customer_state", "type":"string"},
+                  {"name": "customer_zipcode", "type": "string"}
+                  ]}')
+
+
+     '/root/gh/avro/customers/customers.avro'

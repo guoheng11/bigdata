@@ -1,0 +1,14 @@
+1.通过scala构建一个函数
+def getWeekDay(date:String):String={
+//*****
+}
+
+
+
+2。注册一个udf
+    val udfDayOdWeek=udf{(date:String)=>getWeekDay(date)}   //（这是在spark中使用)
+      spark.udf.register("udfDayOdWeek",(date:String)=>getWeekDay(date)) //(这是为了在sql中使用)
+
+3.使用udf(这是在spark中使用)
+    .withColumn("colName",udfDayOdWeek(col("_c1")))          //（这是在spark中使用)
+    select udfDayOdWeek(date) as product_weekDay,name from product           //这是在sql中使用

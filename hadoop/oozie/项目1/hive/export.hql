@@ -1,0 +1,1 @@
+export table events.train_data to '${outputDir}'

@@ -1,0 +1,7 @@
+select * from customers into outfile '/var/lib/mysql-files/customers.csv'fields terminated by ',' optionally enclosed by '"' escaped by '"' lines terminated by '\r\n'
+
+//1
+functionNaame1（arg1）（arg2）
+//2
+val functionName2=functionNaame1（arg1）
+functionName2(arg2)

@@ -1,0 +1,21 @@
+字符串类型
+字符串类型指CHAR、VARCHAR、BINARY、VARBINARY、BLOB、TEXT、ENUM和SET。该节描述了这些类型如何工作以及如何在查询中使用这些类型。
+
+类型	大小	用途
+CHAR	0-255字节	定长字符串
+VARCHAR	0-65535 字节	变长字符串
+TINYBLOB	0-255字节	不超过 255 个字符的二进制字符串
+TINYTEXT	0-255字节	短文本字符串
+BLOB	0-65 535字节	二进制形式的长文本数据
+TEXT	0-65 535字节	长文本数据
+MEDIUMBLOB	0-16 777 215字节	二进制形式的中等长度文本数据
+MEDIUMTEXT	0-16 777 215字节	中等长度文本数据
+LONGBLOB	0-4 294 967 295字节	二进制形式的极大文本数据
+LONGTEXT	0-4 294 967 295字节	极大文本数据
+CHAR和VARCHAR类型类似，但它们保存和检索的方式不同。它们的最大长度和是否尾部空格被保留等方面也不同。在存储或检索过程中不进行大小写转换。
+
+BINARY和VARBINARY类类似于CHAR和VARCHAR，不同的是它们包含二进制字符串而不要非二进制字符串。也就是说，它们包含字节字符串而不是字符字符串。这说明它们没有字符集，并且排序和比较基于列值字节的数值值。
+
+BLOB是一个二进制大对象，可以容纳可变数量的数据。有4种BLOB类型：TINYBLOB、BLOB、MEDIUMBLOB和LONGBLOB。它们只是可容纳值的最大长度不同。
+
+有4种TEXT类型：TINYTEXT、TEXT、MEDIUMTEXT和LONGTEXT。这些对应4种BLOB类型，有相同的最大长度和存储需求

@@ -1,0 +1,196 @@
+<!--
+  Copyright (c) 2010 Yahoo! Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="it21.events-flow">
+  <start to="step1" />  
+
+  <action name="step1">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/1.train_event.hql</script>
+    </hive2>
+    
+    <ok to="step2"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step2">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/2.user_friend.hql</script>
+    </hive2>
+   
+    <ok to="step3"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step3">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/3.event_attendee.hql</script>
+    </hive2>
+   
+    <ok to="step4"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step4">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/4.event_creator_is_friend.hql</script>
+    </hive2>
+
+    <ok to="step5"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step5">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/5.user_attend_status.hql</script>
+    </hive2>
+
+    <ok to="step6"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step6">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/6.friend_attend_status.hql</script>
+    </hive2>
+
+    <ok to="step7"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step7">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/7.friend_attend_percentage.hql</script>
+    </hive2>
+   
+    <ok to="step8"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="step8">
+    <hive2 xmlns="uri:oozie:hive2-action:0.1">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <jdbc-url>jdbc:hive2://localhost:10000/default</jdbc-url>
+      <password>password</password>
+      <script>scripts/8.test_data.hql</script>
+    </hive2>
+
+    <ok to="export"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="export">
+    <hive2 xmlns="uri:oozie:hive2-action:0.2">
+      <job-tracker>${jobTracker}</job-tracker>
+      <name-node>${nameNode}</name-node>
+      <prepare>
+        <delete path="${targetDir}" />
+      </prepare>
+      <job-xml>conf/hive-site.xml</job-xml>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>${queueName}</value>
+        </property>
+      </configuration>
+      <script>scripts/9.export.hql</script>
+      <param>outputDir=${targetDir}</param>
+    </hive2>
+    <ok to="end"/>
+    <error to="fail"/>
+  </action>
+  
+  <kill name="fail">
+    <message>ETL task(d) failed. The error is [${wf:errorMessage(wf:lastErrorNode())}]</message>
+  </kill>
+
+  <end name="end" />
+</workflow-app>

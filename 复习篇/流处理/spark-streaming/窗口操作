@@ -1,0 +1,9 @@
+1。方法
+    1。countByWindow
+    2。reduceByWindow
+    3。reduceByKeyAndWindow
+    4。countByValueAndWindow
+
+
+2.基于窗口构建Dstream
+val windowedWordCounts = pairs.reduceByKeyAndWindow((a:Int,b:Int) => (a + b), Seconds(30), Seconds(10))

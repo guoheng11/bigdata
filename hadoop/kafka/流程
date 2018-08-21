@@ -1,0 +1,26 @@
+1.create schema
+
+ curl -X POST -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+      --data '{"schema": "{ \"type\": \"record\",\"namespace\":\"com.datafibers.kafka.streams.avro\",\"name\": \"Stock\",\"fields\":[{\"name\":\"refresh_time\",\"type\":\"string\"},{\"name\":\"symbol\",\"type\":\"string\"},{\"name\":\"company_name\",\"type\":\"string\"},{\"name\":\"exchange\",\"type\":\"string\"},{\"name\":\"open_price\",\"type\":\"double\"},{\"name\":\"ask_price\",\"type\":\"double\"},{\"name\":\"ask_size\",\"type\":\"int\"},{\"name\":\"bid_price\",\"type\":\"double\"},{\"name\":\"bid_size\",\"type\":\"int\"},{\"name\":\"price\",\"type\":\"double\"}]}"}' \
+ http://localhost:8081/subjects/stock_test1/versions
+
+
+2.ops start mask0110000
+
+
+03. Add a stock connect and send data to stock_test1
+
+04. Run the main() in class
+
+05. Verify in VM with below command
+
+     kafka-console-consumer --topic stock_out --from-beginning \
+     > --zookeeper localhost:2181 \
+     > --property print.key=true \
+     > --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
+
+06. Run avro example as output topic
+
+07. Verify result in avro format with below command
+
+        kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic stock_out2 --from-beginning

@@ -1,0 +1,57 @@
+1。都老师书籍
+    1。Apache Hive Essentials
+    2。big data processing simolified
+
+2。什么是hive
+    1。hadoop上的数据仓库
+    2。提供了类似于SQL的操作来处理数据
+    3。hive开始应用在facebook（07年）
+    4。hive使更多人用hadoop
+    5。现在hive是apache项目下的顶级项目
+
+
+4。hive的优势和特点
+    1。简单，优化模型。不需要写很多代码。用法类似于SQL
+    2。支持引擎：mapperreduce。tez。spark
+    3。hive支持读取HDFS，hbase
+    4。hive支持自定义的脚本，函数，数据格式
+    5。具备完备的jdbc，odbc驱动程序
+    6。在成产环境中成熟稳定的批处理能力
+    7。hive有一个大且活跃的社区（出现问题解决方案容易找）
+
+5。hive的发展里程碑和主流版本
+    07年开始第一个版本
+    14年8月0.13.0版本稳定完善。支持tez速度上升100倍
+    15年5月  1。2。0绝大多数公司使用
+    2。0。0版本用到内存技术类似于spark
+    16年6月  2。1。0不支持hadoop1系列必须跟hadoop2系列一起用
+
+6。hive  VS  mapperreduce
+    1。执行速度：mappreduce 快 因为hive会被转化成mapperreduce,这个时间
+        如果是复杂任务。hive有优化
+    2。开发速率跟调试。hive完胜mapreduce
+    3。hive会优化HQL转化成速度最快的mapreduce
+
+7。hive元数据管理
+    1。通过元数据把hadoop上文件数据进行数据建模 ===》  类似于关系型数据库
+    2。元数据存储位置：默认在内嵌的derby 一般会放在mysql    在hive-site.xml配置文件
+
+8。hive体系架构
+    常见：
+        1。jdbc，odbc
+        2。 ===》 Thrift Server (Hive Server 1 and 2)
+        3。 ===》 Driver(Compiler, Optimizer, Plan Executor)
+        4。 ===》Metastore
+
+    不常见：
+        1。（web一般不用），（命令行）
+        2。 ===》 Driver(Compiler, Optimizer, Plan Executor)
+        3。 ===》Metastore
+
+    注意：当hive server wei 未启动是 应该使用命令行模式
+
+9。数据类型
+  见课件第三讲 Apache hive 基础   20 页
+
+
+

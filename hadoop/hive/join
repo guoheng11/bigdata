@@ -1,0 +1,180 @@
+
+关键字：Hive Join、Hive LEFT|RIGTH|FULL OUTER JOIN、Hive LEFT SEMI JOIN、Hive Cross Join
+
+Hive中除了支持和传统数据库中一样的内关联、左关联、右关联、全关联，还支持LEFT SEMI JOIN和CROSS JOIN，但这两种JOIN类型也可以用前面的代替。
+
+注意：Hive中Join的关联键必须在ON ()中指定，不能在Where中指定，否则就会先做笛卡尔积，再过滤。
+
+数据准备：
+
+复制代码
+ 1     hive> desc lxw1234_a;
+ 2     OK
+ 3     id string
+ 4     name string
+ 5     Time taken: 0.094 seconds, Fetched: 2 row(s)
+ 6     hive> select * from lxw1234_a;
+ 7     OK
+ 8     1 zhangsan
+ 9     2 lisi
+10     3 wangwu
+11     Time taken: 0.116 seconds, Fetched: 3 row(s)
+12     hive> desc lxw1234_b;
+13     OK
+14     id string
+15     age int
+16     Time taken: 0.159 seconds, Fetched: 2 row(s)
+17     hive> select * from lxw1234_b;
+18     OK
+19     1 30
+20     2 29
+21     4 21
+22     Time taken: 0.09 seconds, Fetched: 3 row(s)
+复制代码
+
+
+
+
+10.1 内关联（JOIN）
+只返回能关联上的结果。
+
+复制代码
+ 1     SELECT a.id,
+ 2     a.name,
+ 3     b.age
+ 4     FROM lxw1234_a a
+ 5     join lxw1234_b b
+ 6     ON (a.id = b.id);
+ 7
+ 8     --执行结果
+ 9
+10     1 zhangsan 30
+11     2 lisi 29
+复制代码
+
+
+10.2 左外关联（LEFT [OUTER] JOIN）
+以LEFT [OUTER] JOIN关键字前面的表作为主表，和其他表进行关联，返回记录和主表的记录数一致，关联不上的字段置为NULL。
+
+是否指定OUTER关键字，貌似对查询结果无影响。
+
+复制代码
+ 1     SELECT a.id,
+ 2     a.name,
+ 3     b.age
+ 4     FROM lxw1234_a a
+ 5     left join lxw1234_b b
+ 6     ON (a.id = b.id);
+ 7
+ 8     --执行结果：
+ 9     1 zhangsan 30
+10     2 lisi 29
+11     3 wangwu NULL
+复制代码
+
+
+10.3 右外关联（RIGHT [OUTER] JOIN）
+和左外关联相反，以RIGTH [OUTER] JOIN关键词后面的表作为主表，和前面的表做关联，返回记录数和主表一致，关联不上的字段为NULL。
+
+是否指定OUTER关键字，貌似对查询结果无影响。
+
+复制代码
+ 1     SELECT a.id,
+ 2     a.name,
+ 3     b.age
+ 4     FROM lxw1234_a a
+ 5     RIGHT OUTER JOIN lxw1234_b b
+ 6     ON (a.id = b.id);
+ 7
+ 8     --执行结果：
+ 9     1 zhangsan 30
+10     2 lisi 29
+11     NULL NULL 21
+复制代码
+10.4 全外关联（FULL [OUTER] JOIN）
+以两个表的记录为基准，返回两个表的记录去重之和，关联不上的字段为NULL。
+
+是否指定OUTER关键字，貌似对查询结果无影响。
+
+注意：FULL JOIN时候，Hive不会使用MapJoin来优化。
+
+复制代码
+ 1 SELECT a.id,
+ 2 a.name,
+ 3 b.age
+ 4 FROM lxw1234_a a
+ 5 FULL OUTER JOIN lxw1234_b b
+ 6 ON (a.id = b.id);
+ 7
+ 8 --执行结果：
+ 9 1 zhangsan 30
+10 2 lisi 29
+11 3 wangwu NULL
+12 NULL NULL 21
+复制代码
+
+
+10.5 LEFT SEMI JOIN
+以LEFT SEMI JOIN关键字前面的表为主表，返回主表的KEY也在副表中的记录。
+
+复制代码
+ 1     SELECT a.id,
+ 2     a.name
+ 3     FROM lxw1234_a a
+ 4     LEFT SEMI JOIN lxw1234_b b
+ 5     ON (a.id = b.id);
+ 6
+ 7     --执行结果：
+ 8     1 zhangsan
+ 9     2 lisi
+10
+11     --等价于：
+12     SELECT a.id,
+13     a.name
+14     FROM lxw1234_a a
+15     WHERE a.id IN (SELECT id FROM lxw1234_b);
+16
+17
+18     --也等价于：
+19     SELECT a.id,
+20     a.name
+21     FROM lxw1234_a a
+22     join lxw1234_b b
+23     ON (a.id = b.id);
+24
+25     --也等价于：
+26     SELECT a.id,
+27     a.name
+28     FROM lxw1234_a a
+29     WHERE EXISTS (SELECT 1 FROM lxw1234_b b WHERE a.id = b.id);
+30
+复制代码
+
+
+10.6 笛卡尔积关联（CROSS JOIN）
+返回两个表的笛卡尔积结果，不需要指定关联键。
+
+复制代码
+ 1     SELECT a.id,
+ 2     a.name,
+ 3     b.age
+ 4     FROM lxw1234_a a
+ 5     CROSS JOIN lxw1234_b b;
+ 6
+ 7     --执行结果：
+ 8     1 zhangsan 30
+ 9     1 zhangsan 29
+10     1 zhangsan 21
+11     2 lisi 30
+12     2 lisi 29
+13     2 lisi 21
+14     3 wangwu 30
+15     3 wangwu 29
+16     3 wangwu 21
+17
+复制代码
+Hive中的JOIN类型基本就是上面这些，至于JOIN时候使用哪一种，完全得根据实际的业务需求来定，但起码你要搞清楚这几种关联类型会返回什么样的结果。
+
+除非特殊需求，并且数据量不是特别大的情况下，才可以慎用CROSS JOIN，否则，很难跑出正确的结果，或者JOB压根不能执行完。
+
+经验告诉我，Hive中只要是涉及到两个表关联，首先得了解一下数据，看是否存在多对多的关联。

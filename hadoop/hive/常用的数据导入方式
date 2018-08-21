@@ -1,0 +1,147 @@
+https://blog.csdn.net/gg584741/article/details/51752836
+
+
+HiveQL
+导入
+insert
+INSERT OVERWRITE TABLE target
+SELECT col1, col2
+FROM source;
+对于分区表，可以使用 PARTITION子句指明数据要插入哪个分区。
+INSERT OVERWRITE TABLE target
+PARTITION (dt='2001-01-01')
+SELECT col1, col2
+FROM source;
+OVERWRITE 关键字表示原来的内容会被后来要插入的数据替换掉。如果要添加记录，使用INSERT INTO TABLE。
+
+如果要动态指明分区：
+
+INSERT OVERWRITE TABLE target
+PARTITION (dt)
+SELECT col1, col2, dt
+FROM source;
+Multitable insert
+在HiveQL中，可以把INSERT语句倒过来，FROM子句放在前面，查询效果是一样的。
+
+FROM logs_ext se
+INSERT INTO TABLE  logs_static
+PARTITION (year = '2014' , month = '6' , day = '21')
+select ip,status WHERE year=2014 AND month=6 AND day=21
+INSERT INTO TABLE  logs_static
+PARTITION (year = '2014' , month = '6' , day = '22')
+select ip,status WHERE year=2014 AND month=6 AND day=22
+INSERT INTO TABLE  logs_staticemployee.txt
+PARTITION (year = '2014' , month = '6' , day = '23')
+select ip,status WHERE year=2014 AND month=6 AND day=23;
+多表插入方法比使用单独的INSERT语句效率更高，因为只需要扫描一遍源表旧可以生成多个不相交的输出。
+
+CREATE TABLE…AS SELECT
+CREATE TABLE target
+AS
+SELECT col1, col2
+FROM source;
+CTAS操作是原子的，所以如果SELECT查询失败，新表就不会被创建。
+
+alert table
+由于HIve使用 “读时模式”，所以在创建表以后，支持对表定义的修改。
+
+例如，重命名表：
+
+ALTER TABLE source RENAME TO target;
+在更新表的元数据以外，Hive还把表的目录移动到新名称对应的目录下。
+Hive允许修改列的定义，添加新的列，甚至用一组新的列替换表内已有的列。
+
+ALTER TABLE target ADD COLUMNS (col3 STRING);
+新的列col3 添加在已有的列的后。数据文件并没有更新，因此查询会未col3的所以的值返回 NULL。
+
+drop table
+DROP TABLE 语句用于删除表的数据和元数据。如果是外部表，就只删除元数据。
+如果要删除表内的数据，保留表的定义，使用TRUNCATE。
+
+TRUNCATE TABLE my_table;
+查询
+排序和聚集
+在HIve中可以使用ORDER BY 语句对数据进行排序。但是ORDER BY能够语气产生排序的结果是通过一个reducer来做到的。对于大规模的数据集，它的效率非常低。
+
+在很多情况下，并不需要结果是全局排序的。此时可以换用Hive的非标准的扩展SORT BY。SORT BY 为每个reducer产生一个排序文件。
+
+在某些情况下，需要控制某个特定的行应该到哪个reducer，其目的通常是为了进行后续的聚集操作。这是 DISTRIBUTE BY所做的。
+
+FROM logs_ext
+SELECT ip , status , day
+DISTRIBUTE BY day
+SORT BY day ASC,status DESC;
+结果：
+
+127.0.0.1   500 21
+127.0.0.1   400 21
+127.0.0.1   300 21
+127.0.0.1   210 22
+127.0.0.1   200 22
+127.0.0.1   100 23
+joins
+和直接使用mapreduce相比，使用Hive的一个好处在于Hive简化了常用操作。
+
+inner join
+举例说明：
+
+可以像sql中使用内连接：
+
+select users.*, things.*
+FROM users join things on (users.id = things.id);
+结果:
+
+1   john    1   Tie
+2   jean    2   Coat
+3   joe 3   Scarf
+4   kay 4   Hat
+5   kay 5   Coat
+6   nat 6   Scarf
+7   ann 7   Coat
+EXPLAIN可以输出很多查询执行集合的详细信息。如果要查看更加详细的信息，可以使用EXPLAIN EXTENDED。
+
+EXPLAIN
+SELECT sales.*, things.*
+FROM sales JOIN things ON (sales.id = things.id);
+outer join
+select users.*, things.*
+FROM users LEFT OUTER JOIN things on (users.id = things.id);
+Hive也支持右连接
+
+select users.*, things.*
+FROM users RIGHT OUTER JOIN things on (users.id = things.id);
+全连接
+
+select users.*, things.*
+FROM users FULL OUTER JOIN things on (users.id = things.id);
+半连接：
+
+select * from things left semi join users on (users.id = things.id);
+结果：
+
+1   Tie
+2   Coat
+3   Scarf
+4   Hat
+5   Coat
+6   Scarf
+7   Coat
+子查询
+Hive对子查询支持优先，只允许子查询出现在SELECT语句的FROM子句中。
+
+SELECT station, year, AVG(max_temperature)
+FROM (
+SELECT station, year, MAX(temperature) AS max_temperature
+FROM records2
+WHERE temperature != 9999 AND quality IN (0, 1, 4, 5, 9)
+GROUP BY station, year
+) mt
+GROUP BY station, year;
+视图
+在Hive中，创建视图时并不把视图 “物化”存储到磁盘上。相反，视图的SELECT语句只是在执行引用视图的语句时才执行。
+
+CREATE VIEW view_logs
+AS
+select * from logs_static where day = 21;
+创建视图时并不执行查询。SHOW TABLES 命令可以查看到视图。DESCRIBE EXTENDED view_logs 可以查看视图的详细信息。
+

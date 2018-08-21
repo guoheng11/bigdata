@@ -1,0 +1,90 @@
+3、修改数据表　　　　　　
+
+　　　　　　　　　　　　修改数据表包括：对表中字段的增加、删除、修改。  在这个里面用的关键字为 ALTER
+
+　　　　　　　　　　　　3.1、修改表名
+
+　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<旧表名> RENAME[TO]<新表名>;
+
+　　　　　　　　　　　　　　　　　　　　将student表名改为student1(改完后在改回来)
+
+　　　　　　　　　　　　　　　　　　　　ALTER TABLE student RENAME TO student1;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　3.2、修改表中的字段名
+
+　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<表名> CHANGE<旧字段名><新字段名><新数据类型>
+
+　　　　　　　　　　　　　　　　　　　　将student表中的name字段名改为 username
+
+　　　　　　　　　　　　　　　　　　　　ALTER TABLE student CHANGE name username VARCHAR(30);
+ 　　　　　　　　　　　　　　　　　　解释：这个不仅能改变字段名，还能将字段的数据类型一并修改，也就是说，你可以单纯的只修改字段名，也可以单纯的只修改数据类型，也可以同时一起修改
+
+　　　　　　　　　　　　3.3、修改表中的数据类型
+
+ 　　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<表名> MODIFY<字段名><数据类型>　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　　　　　　　　　ALTER TABLE student MODIFY username VARCHAR(20);
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　　　　　　　　　解释：只能修改字段名的数据类型，但是其原理跟上面change做的事情一样，这里也有修改字段名的过程，只不过修改后的字段名和修改前的字段名相同，但是数据类型不一样。
+
+
+
+　　　　　　　　　　　　3.4、修改字段的排列位置
+
+　　　　　　　　　　　　　　　　　　　方式1：ALTER TABLE<表名> MODIFY<字段1><数据类型> FIRST|AFTER<字段2>
+
+　　　　　　　　　　　　　　　　　　　　　　解释：将字段1的位置放到第一，或者放到指定字段2的后面
+
+　　　　　　　　　　　　　　　　　　　　　　ALTER TABLE student MODIFY username VARCHAR(20) AFTER age;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　　　　　方式2：ALTER TABLE<表名> CHANGE<字段1><字段2><数据类型> FIRST|AFTER<字段3>　
+
+　　　　　　　　　　　　　　　　　　　　　　解释：其实是一样的，将是字段2覆盖字段1，然后在进行排序
+
+　　　　　　　　　　　　　　　　　　　　　　ALTER TABLE student CHANGE username username VARCHAR(20) AFTER age;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　　　　　　　总结
+
+　　　　　　　　　　　　　　　　　　　　　CHANGE和MODIFY的区别？
+
+　　　　　　　　　　　　　　　　　　　　　　原理都市一样的，MODIFY只能修改数据类型，但是CHANGE能够修改数据类型和字段名，也就是说MODIFY是CHANGE的更具体化的一个操作。可能觉得用CHANGE只改变一个数据类型不太爽，就增加了一个能直接改数据类型的使用关键字MODIFY来操作。
+
+
+
+　　　　　　　　　　　　3.5、添加字段
+
+　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<表名称> ADD<新字段名><数据类型>[约束条件][FIRST|AFTER<已存在的表名>]
+
+　　　　　　　　　　　　　　　　　　　　解释：在一个特定位置增加一个新的字段，如果不指定位置，默认是最后一个。
+
+　　　　　　　　　　　　　　　　　　　　ALTER TABLE student ADD sex VARCHAR(11);
+
+　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　3.6、删除字段
+
+　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<表名称> DROP<字段名>;
+
+　　　　　　　　　　　　　　　　　　　　ALTER TABLE student DROP sex;
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　
+
+　　　　　　　　　　　　3.7、删除表的外键约束
+
+　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<表名称> DROP FOREIGN KEY<外键约束名>
+
+　　　　　　　　　　　　　　　　　　　　　注意：外键约束名 指的不是被外键约束修饰的字段名，切记，而是我们在创建外键约束关系时取的名字。
+
+　　　　　　　　　　　　3.8、更改表的存储引擎
+
+　　　　　　　　　　　　　　　　　　格式：ALTER TABLE<表名> ENGINE=<更改后的存储引擎名>
+
+　　　　　　　　　　　　　　　　　　这个存储引擎目前我自己也不太清楚，虽然知道有哪几种引擎，但是稍微深入一点就不清楚了，所以打算留到日后在说。

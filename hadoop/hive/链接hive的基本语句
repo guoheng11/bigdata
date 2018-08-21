@@ -1,0 +1,17 @@
+1.链接语句
+ beeline -u "jdbc:hive2://localhost:10000/default"   前面写法固定。后面的default表示数据库
+
+
+Port = 10000 : connect to hive 1.2.1
+Port = 10500 : connect to hive 2.1.0
+Port = 10016 : connect to spark sql
+
+
+实例
+hive -e "show databases”
+echo "show databases" > demo.sql && hive -f demo.sql && rm -f demo.sql Enter hive, then show databases;, then quit;
+
+
+参数（-e,-f）
+-e表示执行语句（无需分号）    实例：beeline -u "jdbc:hive2://localhost:10000/default"   hive -e "show databases”
+-f表示执行文件 （）  hive -f demo.sql

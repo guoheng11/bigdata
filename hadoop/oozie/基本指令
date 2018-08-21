@@ -1,0 +1,2 @@
+1。run一个workflow
+oozie job --oozie http://sandox-hdp.hortonworks.com:11000 --config job.properties -run

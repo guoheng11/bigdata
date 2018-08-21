@@ -1,0 +1,99 @@
+1。hbase
+    1。没有ACID
+    2。nosql 数据库是靠应用程序（代码）控制ACID 数据库本身不做ACID的检查
+    3。hbase 没有数据类型 。都是二进制。所以性能非常好  查询速度很快
+    4。冗余数据
+
+2。nosql 与大数据的关系
+    nosql!=big data
+
+3。hbase三大理论
+    1。CAP
+        C:consistency 强一致性
+        A：availability 高可用性（高频率，不间断访问）
+        P：partition 分区
+        所有数据库只能满足CAP中两种特性。不可能满足三种
+        CA：RDBMS
+        CP：Bigtable habse mongodb redis
+        AP：dynamo voldemort Cassandra couchDB
+        但是可以用第三方工具弥补
+    2。BASE
+        B：
+        A：
+        S：
+        E：
+    3。Consistency
+
+4。最终一致性 Eventually Consistency
+
+5。索引
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1

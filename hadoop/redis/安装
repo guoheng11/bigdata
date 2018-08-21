@@ -1,0 +1,15 @@
+Instructions for installing Redis 4.09 - Create a temp folder in Sandbox
+mkdir -p ~/redis  - Download & Unzip Redis Package
+wget http://download.redis.io/releases/redis-4.0.9.tar.gz tar xzf redis-4.0.9.tar.gz
+- Build Redis
+cd ~/redis/redis-4.0.9 make
+- Verify the build
+make test
+ - Run the following command first, then add them in/etc/rc.local
+ echo never > /sys/kernel/mm/transparent_hugepage/enabled
+ sudo sysctl -w net.core.somaxconn=65535
+ - Copy Redis executables
+ sudo cp src/redis-server /usr/local/bin
+ sudo cp src/redis-cli /usr/local/bin
+ sudo cp src/redis-check-rdb /usr/local/bin  - Create Redis service work directories sudo mkdir /etc/redis sudo mkdir -p /var/redis/work  - Copy Redis service script sudo cp utils/redis_init_script /etc/init.d/redis  - Edit /etc/init.d/redis, and add the following at the top #!/bin/sh # # Simple Redis init.d script conceived to work on Linux systems # as it does use of the /proc filesystem. # # chkconfig:   - 85 15 # description:  Redis is a persistent key-value database # processname: redis
+- Edit /etc/init.d/redis to update the following two entries PIDFILE=/var/run/redis.pid CONF="/etc/redis/redis.conf"  - Copy Redis configuration file sudo cp redis.conf /etc/redis/redis.conf  - Edit /etc/redis/redis.conf to update the following fields: daemonize --> yes pidfile --> /var/run/redis.pid port --> 6379 loglevel --> notice dir --> /var/redis/work  - Add redis as service chkconfig --add redis  - Start redis service service redis start  - Verify redis service $ redis-cli ping  $ redis-cli redis> set foo bar OK redis> get foo "bar"

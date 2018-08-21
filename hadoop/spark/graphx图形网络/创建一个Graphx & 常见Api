@@ -1,0 +1,68 @@
+
+//1.引入相关包
+import org.apache.spark.rdd.RDD
+import org.apache.spark.graphx._
+
+//2.获取用作vertexdeRdd
+val tweeters = Array((1L, ("Alice", 28)), (2L, ("Bob", 27)), (3L, ("Charlie", 65)), (4L, ("David", 42)), (5L, ("Ed", 55)), (6L, ("Fran", 50)))
+val vertexRDD: RDD[(Long, (String, Int))] = spark.sparkContext.parallelize(tweeters)
+
+//3.获取用作Edeg的Rdd
+val followRelations = Array(Edge[Int](2L, 1L, 7), Edge[Int](2L, 4L, 2),
+Edge[Int](3L, 2L, 4), Edge[Int](3L, 6L, 3), Edge[Int](4L, 1L, 1), Edge[Int](5L, 2L, 2), Edge[Int](5L, 3L, 8), Edge[Int](5L, 6L, 3))
+val edgeRDD = spark.sparkContext.parallelize(followRelations)
+
+4.生成Graph
+val graph = Graph(vertexRDD,edgeRDD)
+
+常见API
+//1.获取graph的vertices
+graph.vertices.collect
+//2.获取graph的edges
+graph.edges.collect
+//3.获取graph的triplets（//triplets中有5个属性分别表示（srcId=>前者Id,dstId=>后者Id,srcAttr=>前者属性,dstAttr=>后者属性,attr=>Edge的属性）
+graph.triplets.collect
+
+//4。改变vertex的属性（Id无法改变）
+val t1_graph=graph.mapVertices{case(id,(name,age))=>(id,name)}.vertices.collect     //只能改变属性无法改变ID
+val t2_graph=graph.mapVertices{(id,attr)=>(id,attr._1)}.vertices.collect            //只能改变属性无法改变ID
+val e2_graph=graph.mapEdges(e=>e+1)                    //只能改变第三个值（第一个和第二个是节点ID不可变）
+
+
+
+5。join 和outerjoin
+//join  & outerJoin
+//(id, v, cmpy)中id表示相同的Id；v=>前者attr；cmpy=>后者attr
+
+
+//join
+//批量修改vertices用joinVertices;Id相同则进行变换，Id不同则保留原来的值；
+val tweeters_companies = sc.parallelize(Array((1L, "it21 learning"), (2L, "it21 tecth"), (3L, "it21 consulting")))
+val t_graph = graph.joinVertices(tweeters_companies)((id, v, cmpy) => (v._1 + " @ " + cmpy, v._2))
+t_graph.vertices.collect
+
+//outrtjoin
+//批量修改vertices用outerJoinVertices;无论Id是否相同都进行变换(匹配成功则返回Some否则None)
+val s_graph = graph.outerJoinVertices(tweeters_companies)((id, v, cmpy) => (v._1 + " @ " + cmpy, v._2))
+s_graph.vertices.collect
+
+
+6。入度和出度
+//计算入度和出度并放入vertices的attr中
+//inDegrees入度
+//outDegrees出度
+// ◆ indegree
+// ◼ is the in-degree of a vertex
+// ◼ Vertices whose indegree is o won’t be included in the result RDD
+//◆ outdegree
+// ◼ is the out-degree of a vertex
+// ◆ degree
+// ◼ the sum of inDegree and outDegree
+
+case class User(name:String,age:Int,inDeg:Int,outDeg:Int)
+val inUserGraph = graph.mapVertices{case(id,(name,age))=>User(name,age,0,0)}
+//inUserGraph.inDegrees.collect         //获取入度        Array((4,1), (6,2), (2,2), (1,2), (3,1))
+//inUserGraph.outDegrees.collect        //获取出度        Array((4,1), (2,2), (3,2), (5,3))
+val UserGraph = inUserGraph.outerJoinVertices(inUserGraph.inDegrees){case(id,v,inDeg)=>User(v.name,v.age,inDeg.getOrElse(0),v.outDeg)}
+.outerJoinVertices(inUserGraph.outDegrees){case(id,v,outDegrees)=>User(v.name,v.age,v.inDeg,outDegrees.getOrElse(0))}
+.vertices.collect

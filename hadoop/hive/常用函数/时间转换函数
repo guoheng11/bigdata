@@ -1,0 +1,49 @@
+--Hive中日期函数总结:
+--1.时间戳函数
+--日期转时间戳：从1970-01-01 00:00:00 UTC到指定时间的秒数
+select unix_timestamp(); --获得当前时区的UNIX时间戳
+select unix_timestamp('2017-09-15 14:23:00');
+select unix_timestamp('2017-09-15 14:23:00','yyyy-MM-dd HH:mm:ss');
+select unix_timestamp('20170915 14:23:00','yyyyMMdd HH:mm:ss');
+
+--时间戳转日期
+select from_unixtime(1505456567);
+select from_unixtime(1505456567,'yyyyMMdd');
+select from_unixtime(1505456567,'yyyy-MM-dd HH:mm:ss');
+select from_unixtime(unix_timestamp(),'yyyy-MM-dd HH:mm:ss'); --获取系统当前时间
+
+--2.获取当前日期: current_date
+hive> select current_date from dual
+2017-09-15
+
+--3.日期时间转日期：to_date(string timestamp)
+hive> select to_date('2017-09-15 11:12:00') from dual;
+2017-09-15
+
+--3.获取日期中的年/月/日/时/分/秒/周
+with dtime as(select from_unixtime(unix_timestamp(),'yyyy-MM-dd HH:mm:ss') as dt)
+select year(dt),month(dt),day(dt),hour(dt),minute(dt),second(dt),weekofyear(dt)
+  from dtime
+
+--4.计算两个日期之间的天数: datediff
+hive> select datediff('2017-09-15','2017-09-01') from dual;
+14
+
+--5.日期增加和减少: date_add/date_sub(string startdate,int days)
+hive> select date_add('2017-09-15',1) from dual;
+2017-09-16
+hive> select date_sub('2017-09-15',1) from dual;
+2017-09-14
+
+--其他日期函数
+查询当前系统时间(包括毫秒数): current_timestamp;
+查询当月第几天: dayofmonth(current_date);
+月末: last_day(current_date)
+当月第1天: date_sub(current_date,dayofmonth(current_date)-1)
+下个月第1天: add_months(date_sub(current_date,dayofmonth(current_date)-1),1)
+
+
+
+
+
+例子：select price, purchase_time, if(purchase_time like '%M', from_unixtime(unix_timestamp(purchase_time,'hh:mm aa'),'HH:mm'), purchase_time) as time_format from transaction_details

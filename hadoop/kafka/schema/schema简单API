@@ -1,0 +1,10 @@
+
+1.查询所有主题
+get ： http://localhost:8002/subjects
+2。查询某一个主题的版本
+get: http://localhost:8002/subjects/test-value/versions
+3.查询某一个主题的schema
+http://localhost:8002/subjects/test_source-value/versions/1/schema
+4.查询某一个主题某一个版本的情况  ====》可以查询到全局ID
+http://localhost:8002/subjects/test_source-value/versions/1
+http://localhost:8002/subjects/test_source-value/versions/latest

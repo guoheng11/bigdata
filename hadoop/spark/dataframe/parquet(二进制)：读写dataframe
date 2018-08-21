@@ -1,0 +1,3 @@
+ val parquetFileDF = spark.read.parquet("file:///usr/local/spark/examples/src/main/resources/users.parquet")
+
+  peopleDF.write.parquet("file:///usr/local/spark/mycode/newpeople.parquet")

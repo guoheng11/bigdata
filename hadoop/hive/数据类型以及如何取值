@@ -1,0 +1,14 @@
+
+
+2。复杂数据类型
+ARRAY        [‘Apple’,’Orange’,’Mongo’]       ARRAY<string>                        a[0] = ‘Apple’
+
+
+MAP          {‘A’:’Apple’,’O’:’Orange’}       MAP<string, string>                  b[‘A’] = ‘Apple’
+
+
+STRUCT       {‘Apple’, 2}                     STRUCT<fruit:string, weight:int>     c.weight = 2
+
+
+
+

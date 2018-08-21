@@ -1,0 +1,130 @@
+
+1。数据库层面的语句
+create database if not exists myhivebook;
+use myhivebook;
+show databases;
+describe database default; --more details than ’show’, such as location（显示数据库的信息）
+alter database myhivebook set owner user dayongd; drop database if exists myhivebook cascade;
+
+2。hive建表基础语句
+
+CREATE EXTERNAL TABLE IF NOT EXISTS test1 ( name string,
+work_place ARRAY<string>,
+sex_age STRUCT<sex:string,age:int>,
+skills_score MAP<string,int>,
+depart_title MAP<STRING,ARRAY<STRING>> )
+COMMENT 'This is an external table' ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '|'
+COLLECTION ITEMS TERMINATED BY ','
+MAP KEYS TERMINATED BY ':'
+STORED AS TEXTFILE
+LOCATION '/user/dayongd/employee';
+
+PARTITIONED     表示的是分区，不同的分区会以文件夹的形式存在，在查询的时候指定分区查询将会大大加快查询的时间。
+CLUSTERED       表示的是按照某列聚类，例如在插入数据中有两项“张三，数学”和“张三，英语”，若是CLUSTERED BY name，则只会有一项，“张三，(数学，英语)”，这个机制也是为了加快查询的操作。
+STORED          是指定排序的形式，是降序还是升序。
+BUCKETS         是指定了分桶的信息，这在后面会单独列出来，在这里还不会涉及到。
+ROW FORMAT      是指定了行的参数。还要指定列的信息，如ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'
+STORED AS       是指定文件的存储格式。Hive中基本提供两种文件格式：SEQUENCEFILE和TEXTFILE，序列文件是一种压缩的格式，通常可以提供更高的性能。
+
+3。删除表
+drop table tblname [purge]     (指定PURGE后，数据不会放到回收箱，会直接删除。 )
+
+4。对表的操作ALTER
+
+语法
+声明接受任意属性，我们希望在一个表中修改以下语法。
+
+ALTER TABLE name RENAME TO new_name
+ALTER TABLE name ADD COLUMNS (col_spec[, col_spec ...])
+ALTER TABLE name DROP [COLUMN] column_name
+ALTER TABLE name CHANGE column_name new_name new_type
+ALTER TABLE name REPLACE COLUMNS (col_spec[, col_spec ...])
+Rename To… 语句
+下面是查询重命名表，把 employee 修改为 emp。
+
+hive> ALTER TABLE employee RENAME TO emp;
+
+
+Change 语句
+下表包含employee表的字段，它显示的字段要被更改（粗体）。
+
+字段名	从数据类型转换	更改字段名称	转换为数据类型
+eid	int	eid	int
+name	String	ename	String
+salary	Float	salary	Double
+designation	String	designation	String
+下面查询重命名使用上述数据的列名和列数据类型：
+
+hive> ALTER TABLE employee CHANGE name ename String;
+hive> ALTER TABLE employee CHANGE salary salary Double;
+
+
+添加列语句
+下面的查询增加了一个列名dept在employee表。
+
+hive> ALTER TABLE employee ADD COLUMNS (dept STRING COMMENT 'Department name');
+
+REPLACE语句
+以下从employee表中查询删除的所有列，并使用emp替换列：
+
+hive> ALTER TABLE employee REPLACE COLUMNS (
+   > eid INT empid Int,
+   > ename STRING name String);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aa

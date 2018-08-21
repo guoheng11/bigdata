@@ -1,0 +1,5 @@
+mapPartitionWithIndex((id,iter))=>{
+
+iter.map(y=>y.contact("abc"))
+
+}

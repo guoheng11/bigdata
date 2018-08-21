@@ -1,0 +1,10 @@
+1。Json
+df.write.fromat("json").save("/root/retail_db/filename")
+2。parquet
+peopleDF.write.parquet("file:///usr/local/spark/mycode/newpeople.parquet")
+
+3。csv
+df.write.format("csv").option("header","true").option("delimiter","|").mode("overwrite").save("/root/retail_db/filename"
+
+4.hive  往hive中某一个数据库的表写数据
+df.write.mode("overwrite").saveAsTable("dbName.TableName")

@@ -1,0 +1,27 @@
+from pyspark.sql import SparkSession
+import random
+spark=SparkSession.builder.getOrCreate()
+
+num = 10000000
+def inside(p):
+    x,y=random.random(),random.random()
+    return x*x+y*y<1
+count = spark.sparkContext.parallelize(range(0,num)).filter(inside).count()
+print(count)
+
+pi = 4*count/num
+print(pi)
+
+创建文件  /otherTest/sci.py
+        内容
+        //
+        def sqrt(num):
+            return num*num
+        def circle_area(r):
+
+            return 3.14*sqrt(r)
+        //
+
+spark.sparkContext.addPyFile("file:///otherTest/sci.py")
+from sci import circle_area
+spark.sparkContext.parallelize([23,4,5,67,54]).map(lambda x:circle_area(x)).collect()

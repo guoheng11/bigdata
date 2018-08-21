@@ -1,0 +1,97 @@
+1。spark核心
+    1。RDD
+    2。DAG direct acyclic graph 有向无环图（单向）
+
+2。DAG特点
+    1。针对RDD做一个RDD变换图（类似于SQL的编译）
+    2。
+
+3。spark是如何利用DAG工作的
+
+
+4。stage的划分依据
+    1。产生了data shuffle 就是生成一个新的stage
+    2。对数据从新整理就会产生新的stage（也就是产生data shuffle）
+    3。stage中包含多个task===》一个partition就是一个task（并行的）
+    4。上一个stage结束之后（所有task结束）才会执行下一个stage
+    5。
+
+5。shuffle in spark
+    1。stage1结束后是stage2将数据从stage1拿到stage2不是stage1将数据送入stage2的分区
+    2。stage2将数据拿到本地后会写入本地disk做备份防止数据丢失
+    3。默认的datashuffle不会改变分区数量===》可以通过repartition， 等方法改变分区数目
+
+
+6。常用函数
+    1。foldLeft
+        arrStr.foldLeft(Map.empty[String,Int])((m,w)=> m + (w->(m.get(w).getOrElse(0)+1)))
+
+7。RDD优化
+    1。Cache/persist
+    2。rdd.cache（）缓存rdd===》比秒从新生成
+    3。使用cache原则
+        1。产生data shuffle后使用cache
+          例如：sort，join，reduce等操作
+        2。后面一定会再次用到
+    4。清除cache===》rdd.unpersist（）
+
+8。data lineage（RDD生成的记录流程）
+
+9。Cache/persist
+    1。spark < 2.0  ===》cache = persist（MEMORY）
+    2。spaek >2.0   ===》cache = persist（MERORY_AND_DISK）
+
+10.RDD Checkpointting  VS   cache/persist
+    checkpoint
+    1。当某一个RDD的生成需要花很多时间。防止应用挂掉重新计算RDD
+        1。像这种RDD可以设置checkpoint存储下来。应用重启时不需要从头再来
+    cache，persist
+    2。当一个RDD会被下次使用的，且不希望重新计算这个RDD（可能花费时间比较多）
+        1。频繁使用且计算代价比较大的RDD可是设置cache
+    最大不同点：checkpoint需要手动删除
+     cache，persist在程序结束后自动删除
+
+11。广播变量broadcast
+    1。将Driver上的变量广播到executor上
+    2。在Driver上定义的变量在executor上无法直接访问因为该变量实在Driver上的JVM里存在
+    3。val broadcastVar = sc。broadcast（Array（1，2，3，4，5，6））
+       broadcastVar.value===》获取广播变量的值
+
+12。partition优化
+    1。大小不能大于2G
+    2。大约128M
+    3。当partition数量大于2000是就设置为2000
+
+13。partition设置规则
+    1。不能太少===》做聚合操作的时候可能会导致内存益处
+    2。不能太多===》产生datashuffle过多（例如1M的数据要分发到1000个partition则需要分发1G）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    1。

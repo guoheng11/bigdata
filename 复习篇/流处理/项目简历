@@ -1,0 +1,16 @@
+1。项目名称：股票流数据处理分析
+    环境：IDEA, JDK 1.8 Confluent Kafka 4.3.1
+    技术：kafka，kafkaConnecter，Schema_Registry，ksql,mysql,hadoop,hive,grafana
+
+    Flink 1.4
+    Spark 2.3
+    Hive, Hadoop
+     MySQL
+    Zeppelin/Grafna
+    项目简介
+        使用流数据处理技术处理实时产生的数据，对实时数据进行监控
+    项目简介:
+        通过confluent中sourceConnector将数据收集并存储到kafka中然后使用sinkConnector将数据送入HDFS和mysql，
+        使用grafana实时数据可视化工具将mysql中数据进行实时监控分析
+
+

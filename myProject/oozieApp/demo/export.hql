@@ -1,0 +1,1 @@
+EXPORT TABLE events.users TO '${outputDir}';

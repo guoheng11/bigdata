@@ -1,0 +1,47 @@
+1.用到的工具
+    1。存储工具：hadoop-hdfs，hbase，kafka，rdbms
+    2。计算工具：hive（计算引擎：mapreduce，TEZ，SPARK） ，spark
+    3。工作流工具：oozie，
+    4。可视化工具zeppelin，granfana
+    5。流处理工具：KStream，flink，spark-streaming
+    6。开发环境：IEDA，git，maven，Scala，sbt
+    7。操作系统linux
+
+2。技能。hdfs，hiveSQL，sparkSQL，kafkaconnector的编写，Kstream，Ksql，
+        flume，sparkGraph，sparkML，oozie，hbase，mysql，
+
+
+
+
+
+Find out most popular card being used by customer
+Find out the top 5 job titles in the customer data
+For female in US, what's the most popular card they are holding
+Calculate customer statistic by gender and country
+Calculate total revenue for each month.
+Calculate total revenue by each quarter
+Calculate total revenue by year
+Calculate total revenue by week day
+Calculate total revenue by time bucket (data clean needed)
+Calculate average spending by above time bucket
+Calculate average spending by week day
+Calculate total number of transactions for year, month, weekday
+Find the top 10 customer who has the most transaction?
+Find the top 10 customer who has the most spending?
+Who has the min. number of transactions during the period?
+Calculate total unique customers by each quarter
+Calculate total unique customers by week
+Calculate max of average of customer for all the campaign
+Who spend most amount for each month?
+Who is most frequent visitors for each month?
+Find top 5 popular sold product by total price
+Find top 5 popular sold product by frequency of purchase
+Find top 5 popular sold product by number of customer
+Verify the top 5 details
+Find out most popular store being visit by unique customer id
+ind out most popular store by amount purchased by customer
+ind out most popular store by transactions by customer
+Get the most popular product by stores by unique customer id
+Get the ratio of employee vs. customer visit for each store
+Calculate revenue for each store by year and month
+Make pie chart for total revenue by store

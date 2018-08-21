@@ -1,0 +1,7 @@
+1。点击anonymous ==》interpreter ===》create  ===》
+    Interpreter Name  ===》hql，sh   脚本名称
+    Interpreter group ===》JDBC 脚本分组 ，也就是脚本类型
+
+    在notebook页面点击齿轮按钮设置  添加新建立的命令
+
+2。用spark.sql分区时报错。可能是因为spark的分区设置没有打开

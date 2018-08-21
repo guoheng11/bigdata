@@ -1,0 +1,11 @@
+语法：select 表达式(列名执行运算) from 表名。
+	Select 列名 as 别名 from 表名。
+	案例：
+		在所有学生分数上加5分--- select name,chinese+5,math+5,english+5 from student;
+		统计每个学生的总分数---select name,chinese+math+english from student;
+		使用别名表示学生分数---select name,chinese+math+english as 总分 from student;
+
+注意事项：
+		在使用别名的时，as可以省略
+		select name,math from student; 查询name和math两列的值
+		select name math from student; 查询name列值，别名为math
